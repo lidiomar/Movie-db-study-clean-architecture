@@ -26,7 +26,7 @@ public class RemoteMovieLoader: MovieLoader {
             switch result {
             case .failure:
                 completion(.failure(RemoteMovieLoader.Error.connectionError))
-            case let .success(response):
+            case let .success((_, response)):
                 if response.statusCode != 200 {
                     completion(.failure(RemoteMovieLoader.Error.invalidData))
                 }

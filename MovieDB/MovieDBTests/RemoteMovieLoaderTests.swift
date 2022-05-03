@@ -77,9 +77,9 @@ class RemoteMovieLoaderTests: XCTestCase {
 
 class HTTPClientSpy: HTTPClient {
     var urls: [URL] = []
-    var completions: [(Result<HTTPURLResponse, Error>) -> Void] = []
+    var completions: [(Result<(Data, HTTPURLResponse), Error>) -> Void] = []
     
-    func get(url: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void) {
+    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
         urls.append(url)
         completions.append(completion)
     }
@@ -93,6 +93,7 @@ class HTTPClientSpy: HTTPClient {
                                        statusCode: statusCode,
                                        httpVersion: nil,
                                        headerFields: nil)!
-        completions[index](.success(response))
+        let data = Data()
+        completions[index](.success((data, response)))
     }
 }
