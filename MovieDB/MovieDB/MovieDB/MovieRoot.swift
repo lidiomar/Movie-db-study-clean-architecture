@@ -7,7 +7,7 @@
 
 import Foundation
 
-struct MovieRoot: Equatable {
+public struct MovieRoot: Equatable {
     let page: Int
     let results: [Movie]
 }

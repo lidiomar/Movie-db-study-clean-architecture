@@ -7,8 +7,8 @@
 
 import Foundation
 
-protocol MovieLoader {
+public protocol MovieLoader {
     typealias result = Swift.Result<MovieRoot, Error>
     
-    func load(completion: @escaping (result) -> Void)
+    func load(url: URL, completion: @escaping (result) -> Void)
 }
