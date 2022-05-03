@@ -18,7 +18,7 @@ class RemoteMovieLoader: MovieLoader {
         self.httpClient = httpClient
     }
     
-    func load(url: URL, completion: @escaping (result) -> Void) {
+    func load(completion: @escaping (result) -> Void) {
         httpClient.get(url: url, completion: { _ in })
     }
 }
@@ -31,20 +31,34 @@ class RemoteMovieLoaderTests: XCTestCase {
     
     func test_remoteMovieLoader_requestURL() {
         let url = URL(string: "http://any-url.com")!
+        let (sut, httpClient) = makeSUT(url: url)
+        
+        sut.load(completion: { _ in })
+        
+        XCTAssertEqual(httpClient.urls, [url])
+    }
+    
+    func test_remoteMovieLoader_requestURLTwice() {
+        let url = URL(string: "http://any-url.com")!
+        let (sut, httpClient) = makeSUT(url: url)
+        
+        sut.load(completion: { _ in })
+        sut.load(completion: { _ in })
+        
+        XCTAssertEqual(httpClient.urls, [url, url])
+    }
+    
+    private func  makeSUT(url: URL) -> (MovieLoader, HTTPClientSpy) {
         let httpClientSpy = HTTPClientSpy()
         let sut = RemoteMovieLoader(url: url, httpClient: httpClientSpy)
-        
-        
-        sut.load(url: url, completion: { _ in })
-        
-        XCTAssertEqual(url, httpClientSpy.url)
+        return (sut, httpClientSpy)
     }
 }
 
 class HTTPClientSpy: HTTPClient {
-    var url: URL?
+    var urls: [URL] = []
     
     func get(url: URL, completion: @escaping (Data) -> Void) {
-        self.url = url
+        urls.append(url)
     }
 }
