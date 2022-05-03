@@ -1,4 +1,4 @@
-# Moview DB Case Study
+# Movie DB Case Study
 
 ## Popular movies list
 
