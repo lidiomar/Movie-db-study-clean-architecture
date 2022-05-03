@@ -13,6 +13,8 @@
 		7095F6D02821A85400067D58 /* Movie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095F6CF2821A85400067D58 /* Movie.swift */; };
 		7095F6D22821A90E00067D58 /* MovieRoot.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095F6D12821A90E00067D58 /* MovieRoot.swift */; };
 		7095F6D72821AFB800067D58 /* RemoteMovieLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095F6D62821AFB800067D58 /* RemoteMovieLoaderTests.swift */; };
+		70C166292821E35E002561DB /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C166282821E35E002561DB /* HTTPClient.swift */; };
+		70C1662B2821E385002561DB /* RemoteMovieLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C1662A2821E385002561DB /* RemoteMovieLoader.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,6 +35,8 @@
 		7095F6CF2821A85400067D58 /* Movie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Movie.swift; sourceTree = "<group>"; };
 		7095F6D12821A90E00067D58 /* MovieRoot.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MovieRoot.swift; sourceTree = "<group>"; };
 		7095F6D62821AFB800067D58 /* RemoteMovieLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMovieLoaderTests.swift; sourceTree = "<group>"; };
+		70C166282821E35E002561DB /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
+		70C1662A2821E385002561DB /* RemoteMovieLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMovieLoader.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,6 +79,7 @@
 		7095F6B42821972200067D58 /* MovieDB */ = {
 			isa = PBXGroup;
 			children = (
+				70C166272821E347002561DB /* API */,
 				7095F6CC2821A74300067D58 /* MovieDB */,
 				7095F6CA2821A6BD00067D58 /* Hello.swift */,
 			);
@@ -97,6 +102,15 @@
 				7095F6D12821A90E00067D58 /* MovieRoot.swift */,
 			);
 			path = MovieDB;
+			sourceTree = "<group>";
+		};
+		70C166272821E347002561DB /* API */ = {
+			isa = PBXGroup;
+			children = (
+				70C166282821E35E002561DB /* HTTPClient.swift */,
+				70C1662A2821E385002561DB /* RemoteMovieLoader.swift */,
+			);
+			path = API;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -210,7 +224,9 @@
 			buildActionMask = 2147483647;
 			files = (
 				7095F6CB2821A6BD00067D58 /* Hello.swift in Sources */,
+				70C166292821E35E002561DB /* HTTPClient.swift in Sources */,
 				7095F6CE2821A75E00067D58 /* MovieLoader.swift in Sources */,
+				70C1662B2821E385002561DB /* RemoteMovieLoader.swift in Sources */,
 				7095F6D22821A90E00067D58 /* MovieRoot.swift in Sources */,
 				7095F6D02821A85400067D58 /* Movie.swift in Sources */,
 			);

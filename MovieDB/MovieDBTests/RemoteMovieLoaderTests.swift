@@ -8,37 +8,6 @@
 import XCTest
 import MovieDB
 
-
-class RemoteMovieLoader: MovieLoader {
-    private var url: URL
-    private var httpClient: HTTPClient
-    
-    enum Error: Swift.Error {
-        case connectionError
-        case invalidData
-    }
-    
-    init(url: URL, httpClient: HTTPClient) {
-        self.url = url
-        self.httpClient = httpClient
-    }
-    
-    func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        httpClient.get(url: url, completion: { result in
-            switch result {
-            case .failure:
-                completion(.failure(RemoteMovieLoader.Error.connectionError))
-            default:
-                break
-            }
-        })
-    }
-}
-
-protocol HTTPClient {
-    func get(url: URL, completion: @escaping (Result<Data, Error>) -> Void)
-}
-
 class RemoteMovieLoaderTests: XCTestCase {
     
     func test_loader_requestURL() {
@@ -79,6 +48,26 @@ class RemoteMovieLoaderTests: XCTestCase {
         XCTAssertEqual(capturedErrors, [.connectionError])
     }
     
+    func test_loader_deliversErrorOnNon200HTTPStatus() {
+        let url = URL(string: "http://any-url.com")!
+        let (sut, httpClient) = makeSUT(url: url)
+        let httpSamples = [404, 401, 500, 502]
+        
+        httpSamples.enumerated().forEach { index, code in
+            var capturedErrors: [RemoteMovieLoader.Error] = []
+            sut.load { result in
+                switch result {
+                case let .failure(error):
+                    capturedErrors.append(error as! RemoteMovieLoader.Error)
+                default:
+                    XCTFail("Expected error but \(result) was found")
+                }
+            }
+            httpClient.complete(withStatusCode: code, at: index)
+            XCTAssertEqual(capturedErrors, [.invalidData])
+        }
+    }
+    
     private func makeSUT(url: URL) -> (MovieLoader, HTTPClientSpy) {
         let httpClientSpy = HTTPClientSpy()
         let sut = RemoteMovieLoader(url: url, httpClient: httpClientSpy)
@@ -88,14 +77,22 @@ class RemoteMovieLoaderTests: XCTestCase {
 
 class HTTPClientSpy: HTTPClient {
     var urls: [URL] = []
-    var completions: [(Result<Data, Error>) -> Void] = []
+    var completions: [(Result<HTTPURLResponse, Error>) -> Void] = []
     
-    func get(url: URL, completion: @escaping (Result<Data, Error>) -> Void) {
+    func get(url: URL, completion: @escaping (Result<HTTPURLResponse, Error>) -> Void) {
         urls.append(url)
         completions.append(completion)
     }
     
     func completeWith(error: Error, at index: Int) {
         completions[index](.failure(error))
+    }
+    
+    func complete(withStatusCode statusCode: Int, at index: Int) {
+        let response = HTTPURLResponse(url: urls[index],
+                                       statusCode: statusCode,
+                                       httpVersion: nil,
+                                       headerFields: nil)!
+        completions[index](.success(response))
     }
 }
