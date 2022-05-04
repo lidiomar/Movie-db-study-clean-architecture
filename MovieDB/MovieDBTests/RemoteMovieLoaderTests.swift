@@ -50,21 +50,97 @@ class RemoteMovieLoaderTests: XCTestCase {
     
     func test_loader_deliversNoItemsOn200HTTPStatusResponseWithEmptyResult() {
         let (sut, httpClient) = makeSUT()
-        var capture = [RemoteMovieLoader.Error]()
+        let json: [String: Any] = ["page": 1, "results": []]
+        let data = try! JSONSerialization.data(withJSONObject: json)
+        
+        expect(sut, toCompleteWith: .invalidData) {
+            httpClient.complete(withStatusCode: 200, at: 0, withData: data)
+        }
+    }
+    
+    func test_loader_deliversItemsOn200HTTPStatusResponseWithResult() {
+        let (sut, httpClient) = makeSUT()
+        var capturedMovieRoot: MovieRoot?
         
         sut.load { result in
             switch result {
-            case let .failure(error):
-                capture.append(error as! RemoteMovieLoader.Error)
+            case let .success(movieRoot):
+                capturedMovieRoot = movieRoot
             default:
-                XCTFail("Expected failure but \(result) was found")
+                XCTFail("Expected success but \(result) was retrieved")
             }
         }
-        let json: [String: Any] = ["page": 1, "results": []]
-        let data = try! JSONSerialization.data(withJSONObject: json)
+        
+        let result1 = makeResult(posterPath: "http://a-poster-path.com",
+                                 overview: "An overview",
+                                 releaseDate: "2016-08-03",
+                                 genreIds: [0, 1, 2],
+                                 id: 1,
+                                 title: "Movie title",
+                                 popularity: 3.0,
+                                 voteCount: 150,
+                                 voteAverage: 2.5)
+        
+        let result2 = makeResult(posterPath: "http://another-poster-path.com",
+                                 overview: "Another overview",
+                                 releaseDate: "2017-05-01",
+                                 genreIds: [5],
+                                 id: 2,
+                                 title: "Another movie title",
+                                 popularity: 3.0,
+                                 voteCount: 100,
+                                 voteAverage: 1.5)
+
+        let popularMovieData = makePopularMovieData(page: 1, dataResults: [result1.dataModel, result2.dataModel], objectResults: [result1.objectModel, result2.objectModel])
+        let data = popularMovieData.dataModel
+        let obj = popularMovieData.objectModel
+        
         httpClient.complete(withStatusCode: 200, at: 0, withData: data)
         
-        XCTAssertEqual(capture, [.invalidData])
+        XCTAssertEqual(obj, capturedMovieRoot)
+    }
+    
+    private func makePopularMovieData(page: Int, dataResults: [[String: Any]], objectResults: [Movie]) -> (dataModel: Data, objectModel: MovieRoot) {
+        let popularMovieData: [String: Any] = ["page": page,
+                                               "results": dataResults]
+        
+        let movieRoot = MovieRoot(page: page, results: objectResults)
+        
+        let data = try! JSONSerialization.data(withJSONObject: popularMovieData)
+        return (data, movieRoot)
+    }
+    
+    private func makeResult(posterPath: String,
+                            overview: String,
+                            releaseDate: String,
+                            genreIds: [Int],
+                            id: Int,
+                            title: String,
+                            popularity: Double,
+                            voteCount: Int,
+                            voteAverage: Double) -> (dataModel: [String: Any], objectModel: Movie) {
+        
+        let dataModel: [String: Any] = ["poster_path": posterPath,
+                         "overview": overview,
+                         "release_date": releaseDate,
+                         "genre_ids": genreIds,
+                         "id": id,
+                         "title": title,
+                         "popularity": popularity,
+                         "vote_count": voteCount,
+                         "vote_average": voteAverage]
+        
+        let objectModel = Movie(posterPath: posterPath,
+                          overview: overview,
+                          releaseDate: releaseDate,
+                          genreIds: genreIds,
+                          id: id,
+                          title: title,
+                          popularity: popularity,
+                          voteCount: voteCount,
+                          voteAverage: voteAverage)
+        
+        return (dataModel, objectModel)
     }
     
     private func expect(_ sut: RemoteMovieLoader,
