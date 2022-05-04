@@ -63,6 +63,8 @@ class RemoteMovieLoaderTests: XCTestCase {
         let json: [String: Any] = ["page": 1, "results": []]
         let data = try! JSONSerialization.data(withJSONObject: json)
         httpClient.complete(withStatusCode: 200, at: 0, withData: data)
+        
+        XCTAssertEqual(capture, [.invalidData])
     }
     
     private func expect(_ sut: RemoteMovieLoader,
