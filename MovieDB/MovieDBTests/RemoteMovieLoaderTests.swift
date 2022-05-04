@@ -32,20 +32,10 @@ class RemoteMovieLoaderTests: XCTestCase {
     func test_loader_deliversErrorOnClientError() {
         let url = URL(string: "http://any-url.com")!
         let (sut, httpClient) = makeSUT(url: url)
-        var capturedErrors: [RemoteMovieLoader.Error] = []
         
-        sut.load(completion: { result in
-            switch result {
-            case let .failure(error):
-                capturedErrors.append(error as! RemoteMovieLoader.Error)
-            default:
-                XCTFail("Expected error but \(result) was found")
-            }
-        })
-            
-        httpClient.completeWith(error: NSError(domain: "test", code: 0), at: 0)
-        
-        XCTAssertEqual(capturedErrors, [.connectionError])
+        expect(sut, toCompleteWith: .connectionError) {
+            httpClient.completeWith(error: NSError(domain: "test", code: 0), at: 0)
+        }
     }
     
     func test_loader_deliversErrorOnNon200HTTPStatus() {
@@ -54,18 +44,31 @@ class RemoteMovieLoaderTests: XCTestCase {
         let httpSamples = [404, 401, 500, 502]
         
         httpSamples.enumerated().forEach { index, code in
-            var capturedErrors: [RemoteMovieLoader.Error] = []
-            sut.load { result in
-                switch result {
-                case let .failure(error):
-                    capturedErrors.append(error as! RemoteMovieLoader.Error)
-                default:
-                    XCTFail("Expected error but \(result) was found")
-                }
+            expect(sut, toCompleteWith: .invalidData) {
+                httpClient.complete(withStatusCode: code, at: index)
             }
-            httpClient.complete(withStatusCode: code, at: index)
-            XCTAssertEqual(capturedErrors, [.invalidData])
         }
+    }
+    
+    private func expect(_ sut: MovieLoader,
+                        toCompleteWith result: RemoteMovieLoader.Error,
+                        when action: () -> Void,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+        var capture = [RemoteMovieLoader.Error]()
+        
+        sut.load { result in
+            switch result {
+            case let .failure(error):
+                capture.append(error as! RemoteMovieLoader.Error)
+            default:
+                XCTFail("Expected failure but \(result) was found", file: file, line: line)
+            }
+        }
+        
+        action()
+        
+        XCTAssertEqual(capture, [result])
     }
     
     private func makeSUT(url: URL) -> (MovieLoader, HTTPClientSpy) {
