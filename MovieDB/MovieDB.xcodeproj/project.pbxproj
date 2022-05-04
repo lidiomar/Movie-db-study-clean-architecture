@@ -15,6 +15,8 @@
 		7095F6D72821AFB800067D58 /* RemoteMovieLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7095F6D62821AFB800067D58 /* RemoteMovieLoaderTests.swift */; };
 		70C166292821E35E002561DB /* HTTPClient.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C166282821E35E002561DB /* HTTPClient.swift */; };
 		70C1662B2821E385002561DB /* RemoteMovieLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C1662A2821E385002561DB /* RemoteMovieLoader.swift */; };
+		70DF1B842822B8BB007AF92B /* MovieRootDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DF1B832822B8BB007AF92B /* MovieRootDecodable.swift */; };
+		70DF1B862822B8E5007AF92B /* MovieDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DF1B852822B8E5007AF92B /* MovieDecodable.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -37,6 +39,8 @@
 		7095F6D62821AFB800067D58 /* RemoteMovieLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMovieLoaderTests.swift; sourceTree = "<group>"; };
 		70C166282821E35E002561DB /* HTTPClient.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTTPClient.swift; sourceTree = "<group>"; };
 		70C1662A2821E385002561DB /* RemoteMovieLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMovieLoader.swift; sourceTree = "<group>"; };
+		70DF1B832822B8BB007AF92B /* MovieRootDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRootDecodable.swift; sourceTree = "<group>"; };
+		70DF1B852822B8E5007AF92B /* MovieDecodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieDecodable.swift; path = MovieDB/API/MovieDecodable.swift; sourceTree = SOURCE_ROOT; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -109,6 +113,8 @@
 			children = (
 				70C166282821E35E002561DB /* HTTPClient.swift */,
 				70C1662A2821E385002561DB /* RemoteMovieLoader.swift */,
+				70DF1B832822B8BB007AF92B /* MovieRootDecodable.swift */,
+				70DF1B852822B8E5007AF92B /* MovieDecodable.swift */,
 			);
 			path = API;
 			sourceTree = "<group>";
@@ -225,8 +231,10 @@
 			files = (
 				7095F6CB2821A6BD00067D58 /* Hello.swift in Sources */,
 				70C166292821E35E002561DB /* HTTPClient.swift in Sources */,
+				70DF1B862822B8E5007AF92B /* MovieDecodable.swift in Sources */,
 				7095F6CE2821A75E00067D58 /* MovieLoader.swift in Sources */,
 				70C1662B2821E385002561DB /* RemoteMovieLoader.swift in Sources */,
+				70DF1B842822B8BB007AF92B /* MovieRootDecodable.swift in Sources */,
 				7095F6D22821A90E00067D58 /* MovieRoot.swift in Sources */,
 				7095F6D02821A85400067D58 /* Movie.swift in Sources */,
 			);

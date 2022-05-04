@@ -30,8 +30,7 @@ class RemoteMovieLoaderTests: XCTestCase {
     }
     
     func test_loader_deliversErrorOnClientError() {
-        let url = URL(string: "http://any-url.com")!
-        let (sut, httpClient) = makeSUT(url: url)
+        let (sut, httpClient) = makeSUT()
         
         expect(sut, toCompleteWith: .connectionError) {
             httpClient.completeWith(error: NSError(domain: "test", code: 0), at: 0)
@@ -39,8 +38,7 @@ class RemoteMovieLoaderTests: XCTestCase {
     }
     
     func test_loader_deliversErrorOnNon200HTTPStatus() {
-        let url = URL(string: "http://any-url.com")!
-        let (sut, httpClient) = makeSUT(url: url)
+        let (sut, httpClient) = makeSUT()
         let httpSamples = [404, 401, 500, 502]
         
         httpSamples.enumerated().forEach { index, code in
@@ -50,7 +48,24 @@ class RemoteMovieLoaderTests: XCTestCase {
         }
     }
     
-    private func expect(_ sut: MovieLoader,
+    func test_loader_deliversNoItemsOn200HTTPStatusResponseWithEmptyResult() {
+        let (sut, httpClient) = makeSUT()
+        var capture = [RemoteMovieLoader.Error]()
+        
+        sut.load { result in
+            switch result {
+            case let .failure(error):
+                capture.append(error as! RemoteMovieLoader.Error)
+            default:
+                XCTFail("Expected failure but \(result) was found")
+            }
+        }
+        let json: [String: Any] = ["page": 1, "results": []]
+        let data = try! JSONSerialization.data(withJSONObject: json)
+        httpClient.complete(withStatusCode: 200, at: 0, withData: data)
+    }
+    
+    private func expect(_ sut: RemoteMovieLoader,
                         toCompleteWith result: RemoteMovieLoader.Error,
                         when action: () -> Void,
                         file: StaticString = #file,
@@ -71,7 +86,7 @@ class RemoteMovieLoaderTests: XCTestCase {
         XCTAssertEqual(capture, [result])
     }
     
-    private func makeSUT(url: URL) -> (MovieLoader, HTTPClientSpy) {
+    private func makeSUT(url: URL = URL(string: "http://any-url.com")!) -> (RemoteMovieLoader, HTTPClientSpy) {
         let httpClientSpy = HTTPClientSpy()
         let sut = RemoteMovieLoader(url: url, httpClient: httpClientSpy)
         return (sut, httpClientSpy)
@@ -91,12 +106,11 @@ class HTTPClientSpy: HTTPClient {
         completions[index](.failure(error))
     }
     
-    func complete(withStatusCode statusCode: Int, at index: Int) {
+    func complete(withStatusCode statusCode: Int, at index: Int, withData data: Data = Data()) {
         let response = HTTPURLResponse(url: urls[index],
                                        statusCode: statusCode,
                                        httpVersion: nil,
                                        headerFields: nil)!
-        let data = Data()
         completions[index](.success((data, response)))
     }
 }
