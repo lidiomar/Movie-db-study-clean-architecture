@@ -52,10 +52,19 @@ class RemoteMovieLoaderTests: XCTestCase {
         let (sut, httpClient) = makeSUT()
         let json: [String: Any] = ["page": 1, "results": []]
         let data = try! JSONSerialization.data(withJSONObject: json)
+        var captureMovies: [Movie] = []
         
-        expect(sut, toCompleteWith: .invalidData) {
-            httpClient.complete(withStatusCode: 200, at: 0, withData: data)
+        sut.load { result in
+            switch result {
+            case let .success(movieRoot):
+                captureMovies = movieRoot.results
+            default:
+                XCTFail("Expected success but got \(result)")
+            }
         }
+        
+        httpClient.complete(withStatusCode: 200, at: 0, withData: data)
+        XCTAssertEqual(captureMovies, [])
     }
     
     func test_loader_deliversItemsOn200HTTPStatusResponseWithResult() {

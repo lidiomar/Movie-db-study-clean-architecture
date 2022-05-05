@@ -8,8 +8,8 @@
 import Foundation
 
 public struct MovieRoot: Equatable {
-    let page: Int
-    let results: [Movie]
+    public let page: Int
+    public let results: [Movie]
     
     public init(page: Int, results: [Movie]) {
         self.page = page
