@@ -8,14 +8,15 @@
 import Foundation
 
 class RemoteMovieLoaderMapper {
-    static func map(data: Data, response: HTTPURLResponse) throws -> MovieRoot {
-        if response.statusCode != 200 {
-            throw RemoteMovieLoader.Error.invalidData
+    static func map(data: Data, response: HTTPURLResponse) -> MovieLoader.MovieLoaderResult {
+        guard let movieRootDecodable = try? JSONDecoder().decode(MovieRootDecodable.self, from: data),
+                response.statusCode == 200 else {
+            return .failure(RemoteMovieLoader.Error.invalidData)
         }
-            
-        let movieRootDecodable = try JSONDecoder().decode(MovieRootDecodable.self, from: data)
         
-        return MovieRoot(page: movieRootDecodable.page,
+        let movieRoot = MovieRoot(page: movieRootDecodable.page,
                          results: movieRootDecodable.results.map { $0.movie })
+        
+        return .success(movieRoot)
     }
 }

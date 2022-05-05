@@ -24,16 +24,12 @@ public class RemoteMovieLoader: MovieLoader {
     public func load(completion: @escaping (MovieLoaderResult) -> Void) {
         httpClient.get(url: url, completion: { [weak self] result in
             guard self != nil else { return }
+            
             switch result {
+            case let .success((data, response)):
+                completion(RemoteMovieLoaderMapper.map(data: data, response: response))
             case .failure:
                 completion(.failure(RemoteMovieLoader.Error.connectionError))
-            case let .success((data, response)):
-                do {
-                    let movieRoot = try RemoteMovieLoaderMapper.map(data: data, response: response)
-                    completion(.success(movieRoot))
-                } catch {
-                    completion(.failure(RemoteMovieLoader.Error.invalidData))
-                }
             }
         })
     }
