@@ -109,6 +109,19 @@ class RemoteMovieLoaderTests: XCTestCase {
         XCTAssertEqual(obj, capturedMovieRoot)
     }
     
+    func test_loader_doesNotDeliverResultAfterSUTHasBeenDeallocated() {
+        let httpClient = HTTPClientSpy()
+        let url = URL(string: "http://any-url.com")!
+        var sut: RemoteMovieLoader? = RemoteMovieLoader(url: url, httpClient: httpClient)
+
+        sut?.load { _ in
+            XCTFail("Completion was called after SUT has been deallocated.")
+        }
+
+        sut = nil
+        httpClient.complete(withStatusCode: 200, at: 0)
+    }
+    
     private func makePopularMovieData(page: Int, dataResults: [[String: Any]], objectResults: [Movie]) -> (dataModel: Data, objectModel: MovieRoot) {
         let popularMovieData: [String: Any] = ["page": page,
                                                "results": dataResults]
@@ -173,9 +186,14 @@ class RemoteMovieLoaderTests: XCTestCase {
         XCTAssertEqual(capture, [result])
     }
     
-    private func makeSUT(url: URL = URL(string: "http://any-url.com")!) -> (RemoteMovieLoader, HTTPClientSpy) {
+    private func makeSUT(url: URL = URL(string: "http://any-url.com")!, file: StaticString = #file, line: UInt = #line) -> (RemoteMovieLoader, HTTPClientSpy) {
         let httpClientSpy = HTTPClientSpy()
         let sut = RemoteMovieLoader(url: url, httpClient: httpClientSpy)
+        
+        addTeardownBlock { [weak sut] in
+            XCTAssertNil(sut, "\(String(describing: sut)) is not being deallocated, potential memory leak", file: file, line: line)
+        }
+        
         return (sut, httpClientSpy)
     }
 }
