@@ -10,7 +10,7 @@ import Foundation
 public class URLSessionHTTPClient: HTTPClient {
     var session: URLSession
     
-    public init(session: URLSession = .shared) {
+    public init(session: URLSession = URLSession(configuration: URLSessionConfiguration.ephemeral)) {
         self.session = session
     }
     
