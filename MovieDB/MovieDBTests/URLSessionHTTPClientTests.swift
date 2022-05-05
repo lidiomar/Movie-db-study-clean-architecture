@@ -8,29 +8,6 @@
 import XCTest
 import MovieDB
 
-class URLSessionHTTPClient: HTTPClient {
-    var session: URLSession
-    
-    init(session: URLSession = .shared) {
-        self.session = session
-    }
-    
-    private struct UnexpectedError: Error {}
-    
-    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
-        session.dataTask(with: url) { data, response, error in
-            if let error = error {
-                completion(.failure(error))
-            } else if let data = data, let response = response as? HTTPURLResponse {
-                completion(.success((data, response)))
-            } else {
-                completion(.failure(UnexpectedError()))
-            }
-        }.resume()
-    }
-    
-}
-
 class URLSessionHTTPClientTests: XCTestCase {
     
     override func setUp() {
@@ -92,7 +69,22 @@ class URLSessionHTTPClientTests: XCTestCase {
         XCTAssertNotNil(resultErrorFor(data: Data(), response: anyURLResponse(), error: nil))
         XCTAssertNotNil(resultErrorFor(data: Data(), response: anyURLResponse(), error: anyError()))
         XCTAssertNotNil(resultErrorFor(data: Data(), response: nil, error: nil))
-        XCTAssertNotNil(resultErrorFor(data: Data(), response: anyHTTPURLResponse(), error: anyError()))  
+        XCTAssertNotNil(resultErrorFor(data: Data(), response: anyHTTPURLResponse(), error: anyError()))
+    }
+    
+    func test_getFromURL_returnSuccessWhenDataIsNotNilAndReturnHTTPUrlResponse() {
+        let data = Data()
+        let response = anyHTTPURLResponse()
+        let result = resultFor(data: data, response: response, error: nil)
+        
+        switch result {
+        case let .success((receivedData, receivedResponse)):
+            XCTAssertEqual(receivedData, data)
+            XCTAssertEqual(receivedResponse.statusCode, response.statusCode)
+            XCTAssertEqual(receivedResponse.url, response.url)
+        default:
+            XCTFail("Expect success but received \(String(describing: result))")
+        }
     }
     
     func anyHTTPURLResponse() -> HTTPURLResponse {
