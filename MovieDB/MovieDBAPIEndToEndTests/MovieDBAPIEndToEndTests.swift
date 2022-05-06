@@ -13,7 +13,7 @@ class MovieDBAPIEndToEndTests: XCTestCase {
     
     func test_retrieve20ElementsFromApiForPageNumber1() {
         let url = URL(string: urlString)!
-        let httpClient = URLSessionHTTPClient()
+        let httpClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         let remoteMovieLoader = RemoteMovieLoader(url: url, httpClient: httpClient)
         
         let exp = expectation(description: "Wait for request")
@@ -27,6 +27,6 @@ class MovieDBAPIEndToEndTests: XCTestCase {
             }
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 10.0)
+        wait(for: [exp], timeout: 30.0)
     }
 }
