@@ -27,10 +27,29 @@ public class RemoteMovieLoader: MovieLoader {
             
             switch result {
             case let .success((data, response)):
-                completion(RemoteMovieLoaderMapper.map(data: data, response: response))
+                do {
+                    let movieDecodable = try RemoteMovieLoaderMapper.map(data: data, response: response)
+                    completion(.success(MovieRoot(page: movieDecodable.page, results: movieDecodable.results.mapToModel())))
+                } catch {
+                    completion(.failure(error))
+                }
             case .failure:
                 completion(.failure(RemoteMovieLoader.Error.connectionError))
             }
         })
+    }
+}
+
+extension Array where Element == MovieDecodable {
+    func mapToModel() -> [Movie] {
+        return self.map { Movie(posterPath: $0.poster_path,
+                                overview: $0.overview,
+                                releaseDate: $0.release_date,
+                                genreIds: $0.genre_ids,
+                                id: $0.id,
+                                title: $0.title,
+                                popularity: $0.popularity,
+                                voteCount: $0.vote_count,
+                                voteAverage: $0.vote_average)}
     }
 }
