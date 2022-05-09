@@ -8,33 +8,6 @@
 import XCTest
 import MovieDB
 
-protocol MovieStore {
-    func deleteCache(completion: @escaping (Error?) -> Void)
-    func insert(movieRoot: MovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void)
-}
-
-class LocalMovieLoader {
-    
-    private var movieStore: MovieStore
-    private var timestamp: () -> Date
-    
-    init(movieStore: MovieStore, timestamp: @escaping () -> Date) {
-        self.movieStore = movieStore
-        self.timestamp = timestamp
-    }
-    
-    func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
-        movieStore.deleteCache() { [unowned self] error in
-            if error == nil {
-                self.movieStore.insert(movieRoot: movieRoot, timestamp: self.timestamp(), completion: completion)
-                return
-            }
-            completion(error)
-        }
-    }
-    
-}
-
 class CacheMovieUseCaseTests: XCTestCase {
 
     func test_init_doesNotMessageStoreUponCreation() {
