@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MovieDecodable: Decodable {
+struct MovieDecodable: Decodable {
     let poster_path: String?
     let overview: String
     let release_date: String

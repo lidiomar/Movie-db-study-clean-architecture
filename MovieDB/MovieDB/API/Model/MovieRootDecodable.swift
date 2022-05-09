@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct MovieRootDecodable: Decodable {
+struct MovieRootDecodable: Decodable {
     let page: Int
     let results: [MovieDecodable]
 }
