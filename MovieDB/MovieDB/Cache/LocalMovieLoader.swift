@@ -18,9 +18,13 @@ public class LocalMovieLoader {
     }
     
     public func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
-        movieStore.deleteCache() { [unowned self] error in
+        movieStore.deleteCache() { [weak self] error in
+            guard let self = self else { return }
             if error == nil {
-                self.movieStore.insert(movieRoot: movieRoot, timestamp: self.timestamp(), completion: completion)
+                self.movieStore.insert(movieRoot: movieRoot, timestamp: self.timestamp()) { [weak self] error in
+                    guard self != nil else { return }
+                    completion(error)
+                }
                 return
             }
             completion(error)

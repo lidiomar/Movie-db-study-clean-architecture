@@ -90,6 +90,38 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertNil(receivedError)
     }
     
+    func test_save_doesNotDeliverDeletionErrorAfterSUTInstanceHasBeenDeallocated() {
+        let movieStore = MovieStoreSpy()
+        var sut: LocalMovieLoader? = LocalMovieLoader(movieStore: movieStore, timestamp: { Date() })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        var receivedError: NSError?
+        
+        sut?.save(movieRoot: movieRoot) { error in
+            receivedError = error as NSError?
+        }
+        sut = nil
+        movieStore.completeDeletion(withError: anyError())
+        
+        XCTAssertNil(receivedError)
+    }
+    
+    func test_save_doesNotDeliverInsertionErrorAfterSUTInstanceHasBeenDeallocated() {
+        let movieStore = MovieStoreSpy()
+        var sut: LocalMovieLoader? = LocalMovieLoader(movieStore: movieStore, timestamp: { Date() })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        var receivedError: NSError?
+        
+        sut?.save(movieRoot: movieRoot) { error in
+            receivedError = error as NSError?
+        }
+        
+        movieStore.completeDeletionWithSuccess()
+        sut = nil
+        movieStore.completeInsertionWithError(error: anyError())
+        
+        XCTAssertNil(receivedError)
+    }
+    
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
         let movieStoreSpy = MovieStoreSpy()
         let localMovieLoader = LocalMovieLoader(movieStore: movieStoreSpy, timestamp: timestamp)
