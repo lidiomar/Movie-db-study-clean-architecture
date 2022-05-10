@@ -18,17 +18,41 @@ public class LocalMovieLoader {
     }
     
     public func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
-        movieStore.deleteCache() { [weak self] error in
+        movieStore.deleteCache() { [weak self] cacheDeletionError in
             guard let self = self else { return }
-            if error == nil {
-                self.movieStore.insert(movieRoot: movieRoot, timestamp: self.timestamp()) { [weak self] error in
-                    guard self != nil else { return }
-                    completion(error)
-                }
+            if cacheDeletionError == nil {
+                self.cache(movieRoot: movieRoot, withCompletion: completion)
                 return
             }
+            completion(cacheDeletionError)
+        }
+    }
+    
+    private func cache(movieRoot: MovieRoot,
+                       withCompletion completion: @escaping (Error?) -> Void) {
+        
+        let localMovieRoot = LocalMovieRoot(page: movieRoot.page,
+                                            results: movieRoot.results.mapMovieToLocalMovie())
+        
+        self.movieStore.insert(movieRoot: localMovieRoot, timestamp: self.timestamp()) { [weak self] error in
+            guard self != nil else { return }
             completion(error)
         }
     }
     
+}
+
+
+private extension Array where Element == Movie {
+    func mapMovieToLocalMovie() -> [LocalMovie] {
+        return self.map { LocalMovie(posterPath: $0.posterPath,
+                              overview: $0.overview,
+                              releaseDate: $0.releaseDate,
+                              genreIds: $0.genreIds,
+                              id: $0.id,
+                              title: $0.title,
+                              popularity: $0.popularity,
+                              voteCount: $0.voteCount,
+                              voteAverage: $0.voteAverage) }
+    }
 }

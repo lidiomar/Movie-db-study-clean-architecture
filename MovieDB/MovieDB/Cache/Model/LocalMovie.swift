@@ -1,13 +1,13 @@
 //
-//  Movie.swift
+//  LocalMovie.swift
 //  MovieDB
 //
-//  Created by Lidiomar Machado on 03/05/22.
+//  Created by Lidiomar Machado on 10/05/22.
 //
 
 import Foundation
 
-public struct Movie: Equatable {
+public struct LocalMovie: Equatable {
     public let posterPath: String?
     public let overview: String
     public let releaseDate: String

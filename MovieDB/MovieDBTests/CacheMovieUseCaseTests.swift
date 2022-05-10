@@ -20,7 +20,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let (sut, movieStore) = makeSUT()
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
-        sut.save(movieRoot: movieRoot) { _ in }
+        sut.save(movieRoot: movieRoot.model) { _ in }
         
         XCTAssertEqual(movieStore.receivedMessages, [.deletedCache])
     }
@@ -29,7 +29,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let (sut, movieStore) = makeSUT()
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
-        sut.save(movieRoot: movieRoot) { _ in }
+        sut.save(movieRoot: movieRoot.model) { _ in }
         movieStore.completeDeletion(withError: anyError())
         
         XCTAssertEqual(movieStore.receivedMessages, [.deletedCache])
@@ -40,10 +40,10 @@ class CacheMovieUseCaseTests: XCTestCase {
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
-        sut.save(movieRoot: movieRoot) { _ in }
+        sut.save(movieRoot: movieRoot.model) { _ in }
         movieStore.completeDeletionWithSuccess()
 
-        XCTAssertEqual(movieStore.receivedMessages, [.deletedCache, .insert((movieRoot, timestamp))])
+        XCTAssertEqual(movieStore.receivedMessages, [.deletedCache, .insert((movieRoot.local, timestamp))])
     }
     
     func test_save_failOnDeletionError() {
@@ -51,7 +51,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
-        sut.save(movieRoot: movieRoot) { _ in }
+        sut.save(movieRoot: movieRoot.model) { _ in }
         movieStore.completeDeletion(withError: anyError())
         
         XCTAssertEqual(movieStore.receivedMessages, [.deletedCache])
@@ -64,7 +64,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let error = anyError()
         var receivedError: NSError?
         
-        sut.save(movieRoot: movieRoot) { error in
+        sut.save(movieRoot: movieRoot.model) { error in
             receivedError = error as NSError?
         }
         
@@ -80,7 +80,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         var receivedError: NSError?
         
-        sut.save(movieRoot: movieRoot) { error in
+        sut.save(movieRoot: movieRoot.model) { error in
             receivedError = error as NSError?
         }
         
@@ -96,7 +96,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         var receivedError: NSError?
         
-        sut?.save(movieRoot: movieRoot) { error in
+        sut?.save(movieRoot: movieRoot.model) { error in
             receivedError = error as NSError?
         }
         sut = nil
@@ -111,7 +111,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         var receivedError: NSError?
         
-        sut?.save(movieRoot: movieRoot) { error in
+        sut?.save(movieRoot: movieRoot.model) { error in
             receivedError = error as NSError?
         }
         
@@ -141,8 +141,18 @@ class CacheMovieUseCaseTests: XCTestCase {
                      voteAverage: 0.0)
     }
     
-    private func makeMovieRoot(page: Int, movies: [Movie]) -> MovieRoot {
-        return MovieRoot(page: page, results: movies)
+    private func makeMovieRoot(page: Int, movies: [Movie]) -> (model: MovieRoot, local: LocalMovieRoot) {
+        let localMovieRoot = LocalMovieRoot(page: page, results: movies.map { LocalMovie(posterPath: $0.posterPath,
+                                                                                         overview: $0.overview,
+                                                                                         releaseDate: $0.releaseDate,
+                                                                                         genreIds: $0.genreIds,
+                                                                                         id: $0.id,
+                                                                                         title: $0.title,
+                                                                                         popularity: $0.popularity,
+                                                                                         voteCount: $0.voteCount,
+                                                                                         voteAverage: $0.voteAverage) })
+        let movieRoot = MovieRoot(page: page, results: movies)
+        return (movieRoot, localMovieRoot)
     }
     
     private func anyError() -> NSError {
@@ -163,7 +173,7 @@ private class MovieStoreSpy: MovieStore {
             }
         }
         
-        case insert((MovieRoot, Date))
+        case insert((LocalMovieRoot, Date))
         case deletedCache
     }
     
@@ -177,7 +187,7 @@ private class MovieStoreSpy: MovieStore {
         deleteCacheCompletions.append(completion)
     }
     
-    func insert(movieRoot: MovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void) {
+    func insert(movieRoot: LocalMovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void) {
         receivedMessages.append(.insert((movieRoot, timestamp)))
         insertCompletions.append(completion)
     }
