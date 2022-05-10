@@ -27,7 +27,7 @@ public class LocalMovieLoader {
             completion(cacheDeletionError)
         }
     }
-    
+        
     private func cache(movieRoot: MovieRoot,
                        withCompletion completion: @escaping (Error?) -> Void) {
         
@@ -42,6 +42,11 @@ public class LocalMovieLoader {
     
 }
 
+extension LocalMovieLoader: MovieLoader {
+    public func load(completion: @escaping (MovieLoaderResult) -> Void) {
+        movieStore.retrieve { _ in }
+    }
+}
 
 private extension Array where Element == Movie {
     func mapMovieToLocalMovie() -> [LocalMovie] {

@@ -122,6 +122,15 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertNil(receivedError)
     }
     
+    func test_load_requestCacheRetrieval() {
+        let timestamp = Date()
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        
+        sut.load() { _ in }
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
         let movieStoreSpy = MovieStoreSpy()
         let localMovieLoader = LocalMovieLoader(movieStore: movieStoreSpy, timestamp: timestamp)
@@ -175,6 +184,7 @@ private class MovieStoreSpy: MovieStore {
         
         case insert((LocalMovieRoot, Date))
         case deletedCache
+        case retrieved
     }
     
     private(set) var receivedMessages = [ReceivedMessage]()
@@ -190,6 +200,10 @@ private class MovieStoreSpy: MovieStore {
     func insert(movieRoot: LocalMovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void) {
         receivedMessages.append(.insert((movieRoot, timestamp)))
         insertCompletions.append(completion)
+    }
+    
+    func retrieve(completion: @escaping (Result<MovieRoot, Error>) -> Void) {
+        receivedMessages.append(.retrieved)
     }
     
     func completeDeletion(withError error: NSError, at index: Int = 0) {
