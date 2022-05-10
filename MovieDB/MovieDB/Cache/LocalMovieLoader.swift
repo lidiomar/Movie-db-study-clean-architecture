@@ -44,7 +44,34 @@ public class LocalMovieLoader {
 
 extension LocalMovieLoader: MovieLoader {
     public func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        movieStore.retrieve { _ in }
+        movieStore.retrieve { result in
+            switch result {
+            case let .failure(error):
+                completion(.failure(error))
+            case let .success(localMovieRoot):
+                guard let localMovieRoot = localMovieRoot else {
+                    completion(.success(nil))
+                    return
+                }
+                let movieRoot = MovieRoot(page: localMovieRoot.page,
+                                          results: localMovieRoot.results.mapLocalMovieToMovie())
+                completion(.success(movieRoot))
+            }
+        }
+    }
+}
+
+private extension Array where Element == LocalMovie {
+    func mapLocalMovieToMovie() -> [Movie] {
+        return self.map { Movie(posterPath: $0.posterPath,
+                              overview: $0.overview,
+                              releaseDate: $0.releaseDate,
+                              genreIds: $0.genreIds,
+                              id: $0.id,
+                              title: $0.title,
+                              popularity: $0.popularity,
+                              voteCount: $0.voteCount,
+                              voteAverage: $0.voteAverage) }
     }
 }
 

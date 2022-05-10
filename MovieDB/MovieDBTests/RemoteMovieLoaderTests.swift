@@ -57,7 +57,7 @@ class RemoteMovieLoaderTests: XCTestCase {
         sut.load { result in
             switch result {
             case let .success(movieRoot):
-                captureMovies = movieRoot.results
+                captureMovies = movieRoot!.results
             default:
                 XCTFail("Expected success but got \(result)")
             }

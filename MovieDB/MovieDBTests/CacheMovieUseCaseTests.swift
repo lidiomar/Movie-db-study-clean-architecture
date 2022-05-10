@@ -131,6 +131,44 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
     }
     
+    func test_load_failsOnRetrievalError() {
+        let timestamp = Date()
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        let error = anyError()
+        var receivedError: NSError?
+        
+        sut.load() { result in
+            switch result {
+            case let .failure(error):
+                receivedError = error as NSError?
+            default:
+                XCTFail("Expected failure but got \(result)")
+            }
+        }
+        
+        movieStore.completeRetrieveWithError(error: error)
+        
+        XCTAssertEqual(error, receivedError)
+    }
+    
+    func test_load_deliversNoDataWhenCacheIsEmpty() {
+        let timestamp = Date()
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        var retrievedMovieRoot: MovieRoot?
+        
+        sut.load { result in
+            switch result {
+            case let .success(movieRoot):
+                retrievedMovieRoot = movieRoot
+            default:
+                XCTFail("Expected success but got \(result)")
+            }
+        }
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertNil(retrievedMovieRoot)
+    }
+    
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
         let movieStoreSpy = MovieStoreSpy()
         let localMovieLoader = LocalMovieLoader(movieStore: movieStoreSpy, timestamp: timestamp)
@@ -190,7 +228,7 @@ private class MovieStoreSpy: MovieStore {
     private(set) var receivedMessages = [ReceivedMessage]()
     private var deleteCacheCompletions = [(Error?) -> Void]()
     private var insertCompletions = [(Error?) -> Void]()
-    private var itemsInserted = [(MovieRoot, Date)]()
+    private var retrieveCompletions = [(Result<LocalMovieRoot?, Error>) -> Void]()
     
     func deleteCache(completion: @escaping (Error?) -> Void) {
         receivedMessages.append(.deletedCache)
@@ -202,8 +240,9 @@ private class MovieStoreSpy: MovieStore {
         insertCompletions.append(completion)
     }
     
-    func retrieve(completion: @escaping (Result<MovieRoot, Error>) -> Void) {
+    func retrieve(completion: @escaping (Result<LocalMovieRoot?, Error>) -> Void) {
         receivedMessages.append(.retrieved)
+        retrieveCompletions.append(completion)
     }
     
     func completeDeletion(withError error: NSError, at index: Int = 0) {
@@ -220,5 +259,13 @@ private class MovieStoreSpy: MovieStore {
     
     func completeInsertionWithSuccess(at index: Int = 0) {
         insertCompletions[index](nil)
+    }
+    
+    func completeRetrieveWithError(at index: Int = 0, error: NSError) {
+        retrieveCompletions[index](.failure(error))
+    }
+    
+    func completeRetrieveSuccessfully(at index: Int = 0, with localMovieRoot: LocalMovieRoot?) {
+        retrieveCompletions[index](.success(localMovieRoot))
     }
 }
