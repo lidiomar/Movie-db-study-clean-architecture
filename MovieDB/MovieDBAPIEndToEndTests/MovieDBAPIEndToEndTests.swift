@@ -20,8 +20,8 @@ class MovieDBAPIEndToEndTests: XCTestCase {
         remoteMovieLoader.load { result in
             switch result {
             case let .success(movieRoot):
-                XCTAssertEqual(movieRoot.page, 1)
-                XCTAssertEqual(movieRoot.results.count, 20)
+                XCTAssertEqual(movieRoot!.page, 1)
+                XCTAssertEqual(movieRoot!.results.count, 20)
             default:
                 XCTFail("Expect success but \(result) was received.")
             }
