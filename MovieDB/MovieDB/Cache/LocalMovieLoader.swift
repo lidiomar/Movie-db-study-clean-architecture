@@ -66,7 +66,7 @@ extension LocalMovieLoader: MovieLoader {
     }
     
     private func validTimeStamp(_ timestamp: Date) -> Bool {
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: 9, to: timestamp) else {
             return false
         }
         
