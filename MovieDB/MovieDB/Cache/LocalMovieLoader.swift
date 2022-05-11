@@ -11,6 +11,8 @@ public class LocalMovieLoader {
     
     private var movieStore: MovieStore
     private var timestamp: () -> Date
+    private let calendar = Calendar(identifier: .gregorian)
+    private let currentDate = Date()
     
     public init(movieStore: MovieStore, timestamp: @escaping () -> Date) {
         self.movieStore = movieStore
@@ -43,12 +45,13 @@ public class LocalMovieLoader {
 }
 
 extension LocalMovieLoader: MovieLoader {
+    
     public func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        movieStore.retrieve { result in
+        movieStore.retrieve { [unowned self] result in
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            case let .success(localMovieRoot):
+            case let .success(localMovieRoot) where validTimeStamp(self.timestamp()):
                 guard let localMovieRoot = localMovieRoot else {
                     completion(.success(nil))
                     return
@@ -56,9 +59,20 @@ extension LocalMovieLoader: MovieLoader {
                 let movieRoot = MovieRoot(page: localMovieRoot.page,
                                           results: localMovieRoot.results.mapLocalMovieToMovie())
                 completion(.success(movieRoot))
+            case .success:
+                completion(.success(nil))
             }
         }
     }
+    
+    private func validTimeStamp(_ timestamp: Date) -> Bool {
+        guard let maxCacheAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else {
+            return false
+        }
+        
+        return currentDate < maxCacheAge
+    }
+    
 }
 
 private extension Array where Element == LocalMovie {

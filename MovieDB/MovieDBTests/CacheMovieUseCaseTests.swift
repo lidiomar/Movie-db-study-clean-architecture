@@ -170,7 +170,7 @@ class CacheMovieUseCaseTests: XCTestCase {
     }
     
     func test_load_deliverDataSuccessfullyOnLessThanExpiredTimeForCache() {
-        let timestamp = Date().minuxFeedCacheMaxAge()
+        let timestamp = Date().minuxFeedCacheMaxAge().adding(days: 1)
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         var retrievedMovieRoot: MovieRoot?
@@ -186,6 +186,44 @@ class CacheMovieUseCaseTests: XCTestCase {
         movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
         
         XCTAssertEqual(movieRoot.model, retrievedMovieRoot)
+    }
+    
+    func test_load_deliversNoDataExpiredTimeForCache() {
+        let timestamp = Date().minuxFeedCacheMaxAge()
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        var retrievedMovieRoot: MovieRoot?
+        
+        sut.load { result in
+            switch result {
+            case let .success(movieRoot):
+                retrievedMovieRoot = movieRoot
+            default:
+                XCTFail("Expected success but got \(result)")
+            }
+        }
+        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
+        
+        XCTAssertNil(retrievedMovieRoot)
+    }
+    
+    func test_load_deliversNoDataOnExpiredTimeCache() {
+        let timestamp = Date().minuxFeedCacheMaxAge().adding(days: -1)
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        var retrievedMovieRoot: MovieRoot?
+        
+        sut.load { result in
+            switch result {
+            case let .success(movieRoot):
+                retrievedMovieRoot = movieRoot
+            default:
+                XCTFail("Expected success but got \(result)")
+            }
+        }
+        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
+        
+        XCTAssertNil(retrievedMovieRoot)
     }
     
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
