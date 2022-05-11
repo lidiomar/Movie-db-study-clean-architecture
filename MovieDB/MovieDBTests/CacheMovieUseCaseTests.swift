@@ -135,95 +135,64 @@ class CacheMovieUseCaseTests: XCTestCase {
         let timestamp = Date()
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let error = anyError()
-        var receivedError: NSError?
         
-        sut.load() { result in
-            switch result {
-            case let .failure(error):
-                receivedError = error as NSError?
-            default:
-                XCTFail("Expected failure but got \(result)")
-            }
+        expect(sut, toCompleteWith: .failure(error)) {
+            movieStore.completeRetrieveWithError(error: error)
         }
-        
-        movieStore.completeRetrieveWithError(error: error)
-        
-        XCTAssertEqual(error, receivedError)
     }
     
     func test_load_deliversNoDataWhenCacheIsEmpty() {
         let timestamp = Date()
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
-        var retrievedMovieRoot: MovieRoot?
         
-        sut.load { result in
-            switch result {
-            case let .success(movieRoot):
-                retrievedMovieRoot = movieRoot
-            default:
-                XCTFail("Expected success but got \(result)")
-            }
+        expect(sut, toCompleteWith: .success(nil)) {
+            movieStore.completeRetrieveSuccessfully(with: nil)
         }
-        movieStore.completeRetrieveSuccessfully(with: nil)
-        
-        XCTAssertNil(retrievedMovieRoot)
     }
     
     func test_load_deliverDataSuccessfullyOnLessThanExpiredTimeForCache() {
         let timestamp = Date().minuxFeedCacheMaxAge().adding(days: 1)
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
-        var retrievedMovieRoot: MovieRoot?
         
-        sut.load { result in
-            switch result {
-            case let .success(movieRoot):
-                retrievedMovieRoot = movieRoot
-            default:
-                XCTFail("Expected success but got \(result)")
-            }
+        expect(sut, toCompleteWith: .success(movieRoot.model)) {
+            movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
         }
-        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
-        
-        XCTAssertEqual(movieRoot.model, retrievedMovieRoot)
     }
     
-    func test_load_deliversNoDataExpiredTimeForCache() {
+    func test_load_deliversNoDataWhenCacheIsEqualOfCacheExpirationTime() {
         let timestamp = Date().minuxFeedCacheMaxAge()
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
-        var retrievedMovieRoot: MovieRoot?
         
-        sut.load { result in
-            switch result {
-            case let .success(movieRoot):
-                retrievedMovieRoot = movieRoot
-            default:
-                XCTFail("Expected success but got \(result)")
-            }
+        expect(sut, toCompleteWith: .success(nil)) {
+            movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
         }
-        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
-        
-        XCTAssertNil(retrievedMovieRoot)
     }
     
-    func test_load_deliversNoDataOnExpiredTimeCache() {
+    func test_load_deliversNoDataWhenCacheIsExpired() {
         let timestamp = Date().minuxFeedCacheMaxAge().adding(days: -1)
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
-        var retrievedMovieRoot: MovieRoot?
         
-        sut.load { result in
-            switch result {
-            case let .success(movieRoot):
-                retrievedMovieRoot = movieRoot
+        expect(sut, toCompleteWith: .success(nil)) {
+            movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
+        }
+    }
+    
+    private func expect(_ sut: LocalMovieLoader, toCompleteWith result: LocalMovieLoader.MovieLoaderResult, when action: () -> Void) {
+        sut.load { receivedResult in
+            switch (result, receivedResult) {
+            case let (.success(resultMovieRoot), .success(receivedMovieRoot)):
+                XCTAssertEqual(resultMovieRoot, receivedMovieRoot)
+            case let (.failure(resultError as NSError), .failure(receivedError as NSError)):
+                XCTAssertEqual(resultError, receivedError)
             default:
-                XCTFail("Expected success but got \(result)")
+                XCTFail("Expected \(result) is not equal to \(receivedResult)")
             }
         }
-        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
         
-        XCTAssertNil(retrievedMovieRoot)
+        action()
     }
     
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
