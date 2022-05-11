@@ -169,6 +169,25 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertNil(retrievedMovieRoot)
     }
     
+    func test_load_deliverDataSuccessfullyOnLessThanExpiredTimeForCache() {
+        let timestamp = Date().minuxFeedCacheMaxAge()
+        let (sut, movieStore) = makeSUT(timestamp: { timestamp })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        var retrievedMovieRoot: MovieRoot?
+        
+        sut.load { result in
+            switch result {
+            case let .success(movieRoot):
+                retrievedMovieRoot = movieRoot
+            default:
+                XCTFail("Expected success but got \(result)")
+            }
+        }
+        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
+        
+        XCTAssertEqual(movieRoot.model, retrievedMovieRoot)
+    }
+    
     private func makeSUT(timestamp: @escaping (() -> Date) = {  Date() }) -> (LocalMovieLoader, MovieStoreSpy) {
         let movieStoreSpy = MovieStoreSpy()
         let localMovieLoader = LocalMovieLoader(movieStore: movieStoreSpy, timestamp: timestamp)
@@ -207,6 +226,25 @@ class CacheMovieUseCaseTests: XCTestCase {
     }
 }
 
+private extension Date {
+    
+    private var feedCacheMaxAgeInDays: Int {
+        return 7
+    }
+    
+    func minuxFeedCacheMaxAge() -> Date {
+        return adding(days: -7)
+    }
+    
+    func adding(days: Int) -> Date {
+        return Calendar(identifier: .gregorian).date(byAdding: .day, value: days, to: self)!
+    }
+    
+    func adding(seconds: TimeInterval) -> Date {
+        return self + seconds
+    }
+    
+}
 
 private class MovieStoreSpy: MovieStore {
     
