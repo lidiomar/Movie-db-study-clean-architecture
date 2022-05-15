@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "MovieStoreSpy.retrieve(completion:):CacheMovieUseCaseTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "receivedMessages">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
          <PersistentStrings>
             <PersistentString
@@ -15,6 +23,17 @@
          <PersistentStrings>
             <PersistentString
                value = "httpClient">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "CacheMovieUseCaseTests.test_load_deletesCacheOnRetrievalError():CacheMovieUseCaseTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "movieStore.receivedMessages[0]">
+            </PersistentString>
+            <PersistentString
+               value = "movieStore.receivedMessages">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

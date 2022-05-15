@@ -151,7 +151,7 @@ class CacheMovieUseCaseTests: XCTestCase {
     }
     
     func test_load_deliverDataSuccessfullyOnLessThanExpiredTimeForCache() {
-        let timestamp = Date().minuxFeedCacheMaxAge().adding(days: 1)
+        let timestamp = Date().minusFeedCacheMaxAge().adding(days: 1)
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
@@ -161,7 +161,7 @@ class CacheMovieUseCaseTests: XCTestCase {
     }
     
     func test_load_deliversNoDataWhenCacheIsEqualOfCacheExpirationTime() {
-        let timestamp = Date().minuxFeedCacheMaxAge()
+        let timestamp = Date().minusFeedCacheMaxAge()
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
@@ -171,7 +171,7 @@ class CacheMovieUseCaseTests: XCTestCase {
     }
     
     func test_load_deliversNoDataWhenCacheIsExpired() {
-        let timestamp = Date().minuxFeedCacheMaxAge().adding(days: -1)
+        let timestamp = Date().minusFeedCacheMaxAge().adding(days: -1)
         let (sut, movieStore) = makeSUT(timestamp: { timestamp })
         let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
         
@@ -180,6 +180,56 @@ class CacheMovieUseCaseTests: XCTestCase {
         }
     }
     
+    func test_load_deletesCacheOnRetrievalError() {
+        let (sut, movieStore) = makeSUT()
+        
+        sut.load { _ in }
+        movieStore.completeRetrieveWithError(error: anyError())
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved, .deletedCache])
+    }
+    
+    func test_load_doesNotDeleteCacheOnNilCache() {
+        let (sut, movieStore) = makeSUT()
+        
+        sut.load { _ in }
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
+    func test_load_doesNotDeleteCacheOnValidExpirationPeriod() {
+        let date = Date().minusFeedCacheMaxAge().adding(seconds: 1)
+        let (sut, movieStore) = makeSUT(timestamp: { date })
+        
+        sut.load { _ in }
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
+    func test_load_deleteCacheOnInvalidExpirationPeriod() {
+        let date = Date().minusFeedCacheMaxAge().adding(seconds: -1)
+        let (sut, movieStore) = makeSUT(timestamp: { date })
+        
+        sut.load { _ in }
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved, .deletedCache])
+    }
+    
+    func test_load_doesNotDeleverResultAfterSUTInstanceHasBeenDeallocated() {
+        let movieStore = MovieStoreSpy()
+        var sut: LocalMovieLoader? = LocalMovieLoader(movieStore: movieStore, timestamp: { Date() })
+        
+        sut?.load { result in
+            XCTFail("Load should not be called after LocalMovieLoader be deallocated.")
+        }
+        sut = nil
+        
+        movieStore.completeRetrieveSuccessfully(with: nil)
+    }
+  
     private func expect(_ sut: LocalMovieLoader, toCompleteWith result: LocalMovieLoader.MovieLoaderResult, when action: () -> Void) {
         sut.load { receivedResult in
             switch (result, receivedResult) {
@@ -239,8 +289,8 @@ private extension Date {
         return 7
     }
     
-    func minuxFeedCacheMaxAge() -> Date {
-        return adding(days: -7)
+    func minusFeedCacheMaxAge() -> Date {
+        return adding(days: -feedCacheMaxAgeInDays)
     }
     
     func adding(days: Int) -> Date {
@@ -260,8 +310,12 @@ private class MovieStoreSpy: MovieStore {
             switch (lhs, rhs) {
             case (let .insert((movieLhs, dateLhs)), let .insert((movieRhs, dateRhs))):
                 return movieLhs == movieRhs && dateLhs == dateRhs
-            default:
+            case (.deletedCache, .deletedCache):
                 return true
+            case (.retrieved, .retrieved):
+                return true
+            default:
+                return false
             }
         }
         

@@ -47,11 +47,13 @@ public class LocalMovieLoader {
 extension LocalMovieLoader: MovieLoader {
     
     public func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        movieStore.retrieve { [unowned self] result in
+        movieStore.retrieve { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case let .failure(error):
+                self.movieStore.deleteCache(completion: { _ in })
                 completion(.failure(error))
-            case let .success(localMovieRoot) where validTimeStamp(self.timestamp()):
+            case let .success(localMovieRoot) where self.validTimeStamp(self.timestamp()):
                 guard let localMovieRoot = localMovieRoot else {
                     completion(.success(nil))
                     return
@@ -60,6 +62,7 @@ extension LocalMovieLoader: MovieLoader {
                                           results: localMovieRoot.results.mapLocalMovieToMovie())
                 completion(.success(movieRoot))
             case .success:
+                self.movieStore.deleteCache(completion: { _ in })
                 completion(.success(nil))
             }
         }
