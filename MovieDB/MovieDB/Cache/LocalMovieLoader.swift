@@ -51,7 +51,6 @@ extension LocalMovieLoader: MovieLoader {
             guard let self = self else { return }
             switch result {
             case let .failure(error):
-                self.movieStore.deleteCache(completion: { _ in })
                 completion(.failure(error))
             case let .success(localMovieRoot) where self.validTimeStamp(self.timestamp()):
                 guard let localMovieRoot = localMovieRoot else {
@@ -62,8 +61,21 @@ extension LocalMovieLoader: MovieLoader {
                                           results: localMovieRoot.results.mapLocalMovieToMovie())
                 completion(.success(movieRoot))
             case .success:
-                self.movieStore.deleteCache(completion: { _ in })
                 completion(.success(nil))
+            }
+        }
+    }
+    
+    public func validateCache() {
+        movieStore.retrieve { [weak self] result in
+            guard let self = self else { return }
+            switch result {
+            case .failure:
+                self.movieStore.deleteCache { _ in }
+            case .success where !self.validTimeStamp(self.timestamp()):
+                self.movieStore.deleteCache(completion: { _ in })
+            default:
+                break
             }
         }
     }

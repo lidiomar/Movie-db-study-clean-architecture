@@ -180,16 +180,16 @@ class CacheMovieUseCaseTests: XCTestCase {
         }
     }
     
-    func test_load_deletesCacheOnRetrievalError() {
+    func test_load_hasNoSideEffectsOnRetrievalError() {
         let (sut, movieStore) = makeSUT()
         
         sut.load { _ in }
         movieStore.completeRetrieveWithError(error: anyError())
         
-        XCTAssertEqual(movieStore.receivedMessages, [.retrieved, .deletedCache])
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
     }
     
-    func test_load_doesNotDeleteCacheOnNilCache() {
+    func test_load_hasNoSideEffectOnNilCache() {
         let (sut, movieStore) = makeSUT()
         
         sut.load { _ in }
@@ -198,7 +198,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
     }
     
-    func test_load_doesNotDeleteCacheOnValidExpirationPeriod() {
+    func test_load_hasNoSideEffectOnValidExpirationPeriod() {
         let date = Date().minusFeedCacheMaxAge().adding(seconds: 1)
         let (sut, movieStore) = makeSUT(timestamp: { date })
         
@@ -208,17 +208,56 @@ class CacheMovieUseCaseTests: XCTestCase {
         XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
     }
     
-    func test_load_deleteCacheOnInvalidExpirationPeriod() {
+    func test_load_hasNoSideEffectOnCacheInvalidExpirationPeriod() {
         let date = Date().minusFeedCacheMaxAge().adding(seconds: -1)
         let (sut, movieStore) = makeSUT(timestamp: { date })
         
         sut.load { _ in }
         movieStore.completeRetrieveSuccessfully(with: nil)
         
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
+    func test_validate_deleteCacheOnRetrievalError() {
+        let (sut, movieStore) = makeSUT()
+        
+        sut.validateCache()
+        movieStore.completeRetrieveWithError(error: anyError())
+        
         XCTAssertEqual(movieStore.receivedMessages, [.retrieved, .deletedCache])
     }
     
-    func test_load_doesNotDeleverResultAfterSUTInstanceHasBeenDeallocated() {
+    func test_validate_doesNotDeleteCacheOnNilCache() {
+        let (sut, movieStore) = makeSUT()
+        
+        sut.validateCache()
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
+    func test_validate_doesNotDeleteCacheOnValidExpirationPeriod() {
+        let date = Date().minusFeedCacheMaxAge().adding(seconds: 1)
+        let (sut, movieStore) = makeSUT(timestamp: { date })
+        let movieRoot = makeMovieRoot(page: 1, movies: [makeUniqueMovie(), makeUniqueMovie()])
+        
+        sut.validateCache()
+        movieStore.completeRetrieveSuccessfully(with: movieRoot.local)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved])
+    }
+    
+    func test_validate_deleteCacheOnInvalidExpirationPeriod() {
+        let date = Date().minusFeedCacheMaxAge().adding(seconds: -1)
+        let (sut, movieStore) = makeSUT(timestamp: { date })
+        
+        sut.validateCache()
+        movieStore.completeRetrieveSuccessfully(with: nil)
+        
+        XCTAssertEqual(movieStore.receivedMessages, [.retrieved, .deletedCache])
+    }
+    
+    func test_load_doesNotDeliverResultAfterSUTInstanceHasBeenDeallocated() {
         let movieStore = MovieStoreSpy()
         var sut: LocalMovieLoader? = LocalMovieLoader(movieStore: movieStore, timestamp: { Date() })
         
@@ -229,7 +268,7 @@ class CacheMovieUseCaseTests: XCTestCase {
         
         movieStore.completeRetrieveSuccessfully(with: nil)
     }
-  
+    
     private func expect(_ sut: LocalMovieLoader, toCompleteWith result: LocalMovieLoader.MovieLoaderResult, when action: () -> Void) {
         sut.load { receivedResult in
             switch (result, receivedResult) {
