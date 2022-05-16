@@ -10,5 +10,5 @@ import Foundation
 public protocol MovieStore {
     func deleteCache(completion: @escaping (Error?) -> Void)
     func insert(movieRoot: LocalMovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void)
-    func retrieve(completion: @escaping (Result<LocalMovieRoot?, Error>) -> Void)
+    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date), Error>) -> Void)
 }

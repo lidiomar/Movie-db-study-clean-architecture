@@ -10,13 +10,11 @@ import Foundation
 public class LocalMovieLoader {
     
     private var movieStore: MovieStore
-    private var timestamp: () -> Date
-    private let calendar = Calendar(identifier: .gregorian)
-    private let currentDate = Date()
+    private var currentDate: () -> Date
     
     public init(movieStore: MovieStore, timestamp: @escaping () -> Date) {
         self.movieStore = movieStore
-        self.timestamp = timestamp
+        self.currentDate = timestamp
     }
     
     public func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
@@ -36,7 +34,7 @@ public class LocalMovieLoader {
         let localMovieRoot = LocalMovieRoot(page: movieRoot.page,
                                             results: movieRoot.results.mapMovieToLocalMovie())
         
-        self.movieStore.insert(movieRoot: localMovieRoot, timestamp: self.timestamp()) { [weak self] error in
+        self.movieStore.insert(movieRoot: localMovieRoot, timestamp: self.currentDate()) { [weak self] error in
             guard self != nil else { return }
             completion(error)
         }
@@ -52,7 +50,7 @@ extension LocalMovieLoader: MovieLoader {
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            case let .success(localMovieRoot) where self.validTimeStamp(self.timestamp()):
+            case let .success((localMovieRoot, timeStamp)) where ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp):
                 guard let localMovieRoot = localMovieRoot else {
                     completion(.success(nil))
                     return
@@ -72,22 +70,13 @@ extension LocalMovieLoader: MovieLoader {
             switch result {
             case .failure:
                 self.movieStore.deleteCache { _ in }
-            case .success where !self.validTimeStamp(self.timestamp()):
+            case let .success((_, timeStamp)) where !ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp):
                 self.movieStore.deleteCache(completion: { _ in })
             default:
                 break
             }
         }
     }
-    
-    private func validTimeStamp(_ timestamp: Date) -> Bool {
-        guard let maxCacheAge = calendar.date(byAdding: .day, value: 7, to: timestamp) else {
-            return false
-        }
-        
-        return currentDate < maxCacheAge
-    }
-    
 }
 
 private extension Array where Element == LocalMovie {

@@ -11,6 +11,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "currentDate">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "closure #1 in RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
          <PersistentStrings>
             <PersistentString

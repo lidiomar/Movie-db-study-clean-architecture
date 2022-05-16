@@ -343,7 +343,6 @@ private extension Date {
 }
 
 private class MovieStoreSpy: MovieStore {
-    
     enum ReceivedMessage: Equatable {
         static func == (lhs: MovieStoreSpy.ReceivedMessage, rhs: MovieStoreSpy.ReceivedMessage) -> Bool {
             switch (lhs, rhs) {
@@ -366,7 +365,7 @@ private class MovieStoreSpy: MovieStore {
     private(set) var receivedMessages = [ReceivedMessage]()
     private var deleteCacheCompletions = [(Error?) -> Void]()
     private var insertCompletions = [(Error?) -> Void]()
-    private var retrieveCompletions = [(Result<LocalMovieRoot?, Error>) -> Void]()
+    private var retrieveCompletions = [(Result<(LocalMovieRoot?, Date), Error>) -> Void]()
     
     func deleteCache(completion: @escaping (Error?) -> Void) {
         receivedMessages.append(.deletedCache)
@@ -377,8 +376,7 @@ private class MovieStoreSpy: MovieStore {
         receivedMessages.append(.insert((movieRoot, timestamp)))
         insertCompletions.append(completion)
     }
-    
-    func retrieve(completion: @escaping (Result<LocalMovieRoot?, Error>) -> Void) {
+    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date), Error>) -> Void) {
         receivedMessages.append(.retrieved)
         retrieveCompletions.append(completion)
     }
@@ -404,6 +402,6 @@ private class MovieStoreSpy: MovieStore {
     }
     
     func completeRetrieveSuccessfully(at index: Int = 0, with localMovieRoot: LocalMovieRoot?) {
-        retrieveCompletions[index](.success(localMovieRoot))
+        retrieveCompletions[index](.success((localMovieRoot, Date())))
     }
 }
