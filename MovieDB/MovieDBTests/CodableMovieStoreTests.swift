@@ -19,7 +19,7 @@ class CodableMovieStore: MovieStore {
     }
     
     func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date?), Error>) -> Void) {
-        completion(.success((nil, Date())))
+        completion(.success((nil, nil)))
     }
 }
 
@@ -45,7 +45,25 @@ class CodableMovieStoreTests: XCTestCase {
     }
     
     func test_retrieve_hasNoSideEffectOnEmptyCache() {
+        let sut = makeSUT()
+        let exp = expectation(description: "Wait for movie retrieval")
         
+        sut.retrieve { firstResult in
+            sut.retrieve { secondResult in
+                switch (firstResult, secondResult) {
+                case let (.success((firstLocalMovieRoot, firstDate)), .success((secondLocalMovieRoot, secondDate))):
+                    XCTAssertNil(firstLocalMovieRoot)
+                    XCTAssertNil(firstDate)
+                    XCTAssertNil(secondLocalMovieRoot)
+                    XCTAssertNil(secondDate)
+                default:
+                    XCTFail("Expected success with empty data got \(firstResult) and \(secondResult)")
+                }
+                exp.fulfill()
+            }
+        }
+
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func makeSUT() -> CodableMovieStore {
