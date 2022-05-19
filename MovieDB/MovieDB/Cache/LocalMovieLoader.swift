@@ -50,16 +50,17 @@ extension LocalMovieLoader: MovieLoader {
             switch result {
             case let .failure(error):
                 completion(.failure(error))
-            case let .success((localMovieRoot, timeStamp)) where ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp):
-                guard let localMovieRoot = localMovieRoot else {
+            case let .success((localMovieRoot, timeStamp)):
+                guard let localMovieRoot = localMovieRoot,
+                      let timeStamp = timeStamp,
+                      ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp)
+                else {
                     completion(.success(nil))
                     return
                 }
                 let movieRoot = MovieRoot(page: localMovieRoot.page,
                                           results: localMovieRoot.results.mapLocalMovieToMovie())
                 completion(.success(movieRoot))
-            case .success:
-                completion(.success(nil))
             }
         }
     }
@@ -70,10 +71,13 @@ extension LocalMovieLoader: MovieLoader {
             switch result {
             case .failure:
                 self.movieStore.deleteCache { _ in }
-            case let .success((_, timeStamp)) where !ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp):
-                self.movieStore.deleteCache(completion: { _ in })
-            default:
-                break
+            case let .success((_, timeStamp)):
+                guard let timeStamp = timeStamp else {
+                    return
+                }
+                if !ValidCachePolicy.validTimeStamp(self.currentDate(), against: timeStamp) {
+                    self.movieStore.deleteCache(completion: { _ in })
+                }
             }
         }
     }

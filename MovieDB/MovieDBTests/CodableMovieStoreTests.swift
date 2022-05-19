@@ -18,7 +18,7 @@ class CodableMovieStore: MovieStore {
         
     }
     
-    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date), Error>) -> Void) {
+    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date?), Error>) -> Void) {
         completion(.success((nil, Date())))
     }
 }
@@ -42,6 +42,10 @@ class CodableMovieStoreTests: XCTestCase {
         
         wait(for: [exp], timeout: 1.0)
         XCTAssertNil(receivedLocalMovieRoot)
+    }
+    
+    func test_retrieve_hasNoSideEffectOnEmptyCache() {
+        
     }
     
     private func makeSUT() -> CodableMovieStore {

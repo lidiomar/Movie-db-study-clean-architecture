@@ -365,7 +365,7 @@ private class MovieStoreSpy: MovieStore {
     private(set) var receivedMessages = [ReceivedMessage]()
     private var deleteCacheCompletions = [(Error?) -> Void]()
     private var insertCompletions = [(Error?) -> Void]()
-    private var retrieveCompletions = [(Result<(LocalMovieRoot?, Date), Error>) -> Void]()
+    private var retrieveCompletions = [(Result<(LocalMovieRoot?, Date?), Error>) -> Void]()
     
     func deleteCache(completion: @escaping (Error?) -> Void) {
         receivedMessages.append(.deletedCache)
@@ -376,7 +376,7 @@ private class MovieStoreSpy: MovieStore {
         receivedMessages.append(.insert((movieRoot, timestamp)))
         insertCompletions.append(completion)
     }
-    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date), Error>) -> Void) {
+    func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date?), Error>) -> Void) {
         receivedMessages.append(.retrieved)
         retrieveCompletions.append(completion)
     }
