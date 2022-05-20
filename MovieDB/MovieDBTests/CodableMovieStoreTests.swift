@@ -87,28 +87,46 @@ class CodableMovieStoreTests: XCTestCase {
     
     func test_delete_emptiesPreviouslyInsertedCache() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for deletion")
         
-        sut.deleteCache { error in
-            XCTAssertNil(error, "Expected to delete successfully")
-            exp.fulfill()
-        }
+        let error = deleteCache(sut: sut)
         
-        wait(for: [exp], timeout: 1.0)
+        XCTAssertNil(error, "Expected to delete successfully")
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
     func test_delete_deliversErrorOnDeletionError() {
         let sut = makeSUT(url: FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!)
-        let exp = expectation(description: "Wait for deletion")
         
-        sut.deleteCache { error in
-            XCTAssertNotNil(error, "Expected to not delete successfully")
-            exp.fulfill()
+        let error = deleteCache(sut: sut)
+        
+        XCTAssertNotNil(error, "Expected to not delete successfully")
+        expect(sut: sut, withResult: .success((nil, nil)))
+    }
+    
+    func test_storeSideEffects_runSerially() {
+        let sut = makeSUT()
+        let exp1 = expectation(description: "Wait to insert")
+        let exp2 = expectation(description: "Wait to delete")
+        let exp3 = expectation(description: "Wait to retrieve")
+        let exp4 = expectation(description: "Wait to insert")
+        
+        sut.insert(movieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date()) { _ in
+            exp1.fulfill()
         }
         
-        wait(for: [exp], timeout: 1.0)
-        expect(sut: sut, withResult: .success((nil, nil)))
+        sut.deleteCache { _ in
+            exp2.fulfill()
+        }
+        
+        sut.retrieve { _ in
+            exp3.fulfill()
+        }
+        
+        sut.insert(movieRoot: LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()]), timestamp: Date()) { _ in
+            exp4.fulfill()
+        }
+        
+        wait(for: [exp1, exp2, exp3, exp4], timeout: 5.0)   
     }
     
     @discardableResult
@@ -121,6 +139,18 @@ class CodableMovieStoreTests: XCTestCase {
             exp.fulfill()
         }
         
+        wait(for: [exp], timeout: 1.0)
+        return receivedError
+    }
+    
+    private func deleteCache(sut: CodableMovieStore) -> Error? {
+        let exp = expectation(description: "Wait for deletion")
+        var receivedError: Error?
+        
+        sut.deleteCache { error in
+            receivedError = error
+            exp.fulfill()
+        }
         wait(for: [exp], timeout: 1.0)
         return receivedError
     }
