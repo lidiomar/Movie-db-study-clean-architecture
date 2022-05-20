@@ -121,36 +121,28 @@ class CodableMovieStoreTests: XCTestCase {
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for movie retrieval")
-        let insertedLocalMovieRoot = LocalMovieRoot(page: 1,
-                                                    results: [LocalMovie(posterPath: "",
-                                                                   overview: "",
-                                                                   releaseDate: "",
-                                                                   genreIds: [1],
-                                                                   id: 1,
-                                                                   title: "",
-                                                                   popularity: 1.0,
-                                                                   voteCount: 1,
-                                                                   voteAverage: 1.0)])
         let insertedTimestamp = Date()
+        let insertedLocalMovieRoot = LocalMovieRoot(page: 1,
+                                                    results: [makeUniqueLocalMovie()])
         
-        sut.insert(movieRoot: insertedLocalMovieRoot, timestamp: insertedTimestamp) { error in
-            XCTAssertNil(error, "Expected movieRoot to be inserted successfully")
-            
-            sut.retrieve { result in
-                switch result {
-                case let .success((localMovieRoot, timestamp)):
-                    XCTAssertEqual(localMovieRoot, insertedLocalMovieRoot)
-                    XCTAssertEqual(timestamp, insertedTimestamp)
-                default:
-                    XCTFail("Expected success got \(result)")
-                }
-                exp.fulfill()
-            }
+        
+        let error = insert(sut: sut, localMovieRoot: insertedLocalMovieRoot, timestamp: insertedTimestamp)
+        
+        XCTAssertNil(error, "Movie was not inserted with success.")
+        expect(sut: sut, withLocalMovieRoot: insertedLocalMovieRoot, andTimestamp: insertedTimestamp)
+    }
+    
+    private func insert(sut: CodableMovieStore, localMovieRoot: LocalMovieRoot, timestamp: Date) -> Error? {
+        let exp = expectation(description: "Wait for movie insertion")
+        var receivedError: Error?
+        
+        sut.insert(movieRoot: localMovieRoot, timestamp: timestamp) { error in
+            receivedError = error
+            exp.fulfill()
         }
         
-        
         wait(for: [exp], timeout: 1.0)
+        return receivedError
     }
     
     private func expectToRetrieveTwice(sut: CodableMovieStore,
@@ -190,6 +182,28 @@ class CodableMovieStoreTests: XCTestCase {
     private func makeSUT() -> CodableMovieStore {
         let sut = CodableMovieStore(storeURL: testSpecificStoreURL())
         return sut
+    }
+    
+    
+    private func makeUniqueLocalMovie(posterPath: String = "",
+                                      overview: String = "",
+                                      releaseDate: String = "",
+                                      genreIds: [Int] = [1],
+                                      id: Int = UUID().hashValue,
+                                      title: String = "",
+                                      popularity: Double = 1.0,
+                                      voteCount: Int = 1,
+                                      voteAverage: Double = 1.0) -> LocalMovie {
+        
+        return LocalMovie(posterPath: posterPath,
+                          overview: overview,
+                          releaseDate: releaseDate,
+                          genreIds: genreIds,
+                          id: id,
+                          title: title,
+                          popularity: popularity,
+                          voteCount: voteCount,
+                          voteAverage: voteAverage)
     }
     
     private func testSpecificStoreURL() -> URL {
