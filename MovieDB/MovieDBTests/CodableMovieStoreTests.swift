@@ -131,7 +131,7 @@ class CodableMovieStoreTests: XCTestCase {
     }
     
     @discardableResult
-    private func insert(sut: CodableMovieStore, localMovieRoot: LocalMovieRoot, timestamp: Date) -> Error? {
+    private func insert(sut: MovieStore, localMovieRoot: LocalMovieRoot, timestamp: Date) -> Error? {
         let exp = expectation(description: "Wait for movie insertion")
         var receivedError: Error?
         
@@ -144,7 +144,7 @@ class CodableMovieStoreTests: XCTestCase {
         return receivedError
     }
     
-    private func deleteCache(sut: CodableMovieStore) -> Error? {
+    private func deleteCache(sut: MovieStore) -> Error? {
         let exp = expectation(description: "Wait for deletion")
         var receivedError: Error?
         
@@ -156,7 +156,7 @@ class CodableMovieStoreTests: XCTestCase {
         return receivedError
     }
     
-    private func expect(sut: CodableMovieStore,
+    private func expect(sut: MovieStore,
                         toRetrieveTwice result: Result<(LocalMovieRoot?, Date?), Error>,
                         file: StaticString = #file,
                         line: UInt = #line) {
@@ -165,7 +165,7 @@ class CodableMovieStoreTests: XCTestCase {
 
     }
     
-    private func expect(sut: CodableMovieStore,
+    private func expect(sut: MovieStore,
                         withResult expectedResult: Result<(LocalMovieRoot?, Date?), Error>,
                         file: StaticString = #file,
                         line: UInt = #line) {
@@ -187,7 +187,7 @@ class CodableMovieStoreTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func makeSUT(url: URL? = nil) -> CodableMovieStore {
+    private func makeSUT(url: URL? = nil) -> MovieStore {
         let sut = CodableMovieStore(storeURL: url ?? testSpecificStoreURL())
         return sut
     }
