@@ -109,43 +109,14 @@ class CodableMovieStoreTests: XCTestCase {
     
     func test_retrieve_deliversEmptyOnEmptyCache() {
         let sut = makeSUT()
-        var receivedLocalMovieRoot: LocalMovieRoot?
-        let exp = expectation(description: "Wait for movie retrieval")
         
-        sut.retrieve { result in
-            switch result {
-            case let .success((localMovieRoot, _)):
-                receivedLocalMovieRoot = localMovieRoot
-            default:
-                XCTFail("Expected success with data got \(result)")
-            }
-            exp.fulfill()
-        }
-        
-        wait(for: [exp], timeout: 1.0)
-        XCTAssertNil(receivedLocalMovieRoot)
+        expect(sut: sut, withLocalMovieRoot: nil, andTimestamp: nil)
     }
     
-    func test_retrieve_hasNoSideEffectOnEmptyCache() {
+    func test_retrieve_hasNoSideEffectOnEmptyCacheWhenCalledTwice() {
         let sut = makeSUT()
-        let exp = expectation(description: "Wait for movie retrieval")
         
-        sut.retrieve { firstResult in
-            sut.retrieve { secondResult in
-                switch (firstResult, secondResult) {
-                case let (.success((firstLocalMovieRoot, firstDate)), .success((secondLocalMovieRoot, secondDate))):
-                    XCTAssertNil(firstLocalMovieRoot)
-                    XCTAssertNil(firstDate)
-                    XCTAssertNil(secondLocalMovieRoot)
-                    XCTAssertNil(secondDate)
-                default:
-                    XCTFail("Expected success with empty data got \(firstResult) and \(secondResult)")
-                }
-                exp.fulfill()
-            }
-        }
-
-        wait(for: [exp], timeout: 1.0)
+        expectToRetrieveTwice(sut: sut, withLocalMovieRoot: nil, andTimestamp: nil)
     }
     
     func test_retrieveAfterInsertingToEmptyCache_deliversInsertedValues() {
@@ -180,6 +151,40 @@ class CodableMovieStoreTests: XCTestCase {
         
         
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func expectToRetrieveTwice(sut: CodableMovieStore,
+                                       withLocalMovieRoot expectedLocalMovieRoot: LocalMovieRoot?,
+                                       andTimestamp expectedTimestamp: Date?,
+                                       file: StaticString = #file,
+                                       line: UInt = #line) {
+        expect(sut: sut, withLocalMovieRoot: expectedLocalMovieRoot, andTimestamp: expectedTimestamp)
+        expect(sut: sut, withLocalMovieRoot: expectedLocalMovieRoot, andTimestamp: expectedTimestamp)
+    }
+    
+    private func expect(sut: CodableMovieStore,
+                        withLocalMovieRoot expectedLocalMovieRoot: LocalMovieRoot?,
+                        andTimestamp expectedTimestamp: Date?,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+        let exp = expectation(description: "Wait for movie retrieval")
+        var receivedLocalMovieRoot: LocalMovieRoot?
+        var receivedTimestamp: Date?
+        
+        sut.retrieve { result in
+            switch result {
+            case let .success((localMovieRoot, timestamp)):
+                receivedLocalMovieRoot = localMovieRoot
+                receivedTimestamp = timestamp
+            default:
+                XCTFail("Expected success with data got \(result)", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        XCTAssertEqual(receivedLocalMovieRoot, expectedLocalMovieRoot)
+        XCTAssertEqual(receivedTimestamp, expectedTimestamp)
     }
     
     private func makeSUT() -> CodableMovieStore {
