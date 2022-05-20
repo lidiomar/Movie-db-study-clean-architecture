@@ -121,7 +121,7 @@ class CodableMovieStoreTests: XCTestCase {
     func test_retrieve_hasNoSideEffectOnEmptyCacheWhenCalledTwice() {
         let sut = makeSUT()
         
-        expectToRetrieveTwice(sut: sut, withLocalMovieRoot: nil, andTimestamp: nil)
+        expect(sut: sut, toRetrieveTwice: .success((nil, nil)))
     }
     
     func test_retrieve_deliversFoundValuesOnNonEmptyCache() {
@@ -146,6 +146,15 @@ class CodableMovieStoreTests: XCTestCase {
         expect(sut: sut, withResult: .failure(NSError(domain: "domain", code: 1, userInfo: nil)))
     }
     
+    func test_retrieve_hasNoSideEffectsOnFailure() {
+        let storeURL = testSpecificStoreURL()
+        let sut = makeSUT(url: storeURL)
+
+        try! "invalid data".write(to: storeURL, atomically: false, encoding: .utf8)
+
+        expect(sut: sut, toRetrieveTwice: .failure(NSError(domain: "domain", code: 1, userInfo: nil)))
+    }
+    
     private func insert(sut: CodableMovieStore, localMovieRoot: LocalMovieRoot, timestamp: Date) -> Error? {
         let exp = expectation(description: "Wait for movie insertion")
         var receivedError: Error?
@@ -159,13 +168,12 @@ class CodableMovieStoreTests: XCTestCase {
         return receivedError
     }
     
-    private func expectToRetrieveTwice(sut: CodableMovieStore,
-                                       withLocalMovieRoot expectedLocalMovieRoot: LocalMovieRoot?,
-                                       andTimestamp expectedTimestamp: Date?,
-                                       file: StaticString = #file,
-                                       line: UInt = #line) {
-        expect(sut: sut, withResult: .success((expectedLocalMovieRoot, expectedTimestamp)))
-        expect(sut: sut, withResult: .success((expectedLocalMovieRoot, expectedTimestamp)))
+    private func expect(sut: CodableMovieStore,
+                        toRetrieveTwice result: Result<(LocalMovieRoot?, Date?), Error>,
+                        file: StaticString = #file,
+                        line: UInt = #line) {
+        expect(sut: sut, withResult: result)
+        expect(sut: sut, withResult: result)
 
     }
     
