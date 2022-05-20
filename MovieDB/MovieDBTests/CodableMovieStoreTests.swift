@@ -105,28 +105,29 @@ class CodableMovieStoreTests: XCTestCase {
     
     func test_storeSideEffects_runSerially() {
         let sut = makeSUT()
-        let exp1 = expectation(description: "Wait to insert")
-        let exp2 = expectation(description: "Wait to delete")
-        let exp3 = expectation(description: "Wait to retrieve")
-        let exp4 = expectation(description: "Wait to insert")
+        let exp1 = expectation(description: "1")
+        let exp2 = expectation(description: "2")
+        let exp3 = expectation(description: "3")
+        var orderOfExecution = [XCTestExpectation]()
         
         sut.insert(movieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date()) { _ in
             exp1.fulfill()
+            orderOfExecution.append(exp1)
         }
         
         sut.deleteCache { _ in
             exp2.fulfill()
+            orderOfExecution.append(exp2)
         }
         
-        sut.retrieve { _ in
+        sut.insert(movieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date()) { _ in
             exp3.fulfill()
+            orderOfExecution.append(exp3)
         }
         
-        sut.insert(movieRoot: LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()]), timestamp: Date()) { _ in
-            exp4.fulfill()
-        }
+        wait(for: [exp1, exp2, exp3], timeout: 5.0)
         
-        wait(for: [exp1, exp2, exp3, exp4], timeout: 5.0)   
+        XCTAssertEqual(orderOfExecution, [exp1, exp2, exp3])
     }
     
     @discardableResult
@@ -151,7 +152,7 @@ class CodableMovieStoreTests: XCTestCase {
             receivedError = error
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1.0)
+        wait(for: [exp], timeout: 30.0)
         return receivedError
     }
     

@@ -9,7 +9,7 @@ import Foundation
 
 public class CodableMovieStore {
     private var storeURL: URL
-    
+    private let queue = DispatchQueue(label: "\(CodableMovieStore.self)Queue", qos: .userInitiated, attributes: .concurrent)
     private struct CodableLocalMovieRoot: Codable {
         let page: Int
         let results: [CodableLocalMovie]
@@ -72,44 +72,54 @@ public class CodableMovieStore {
 
 extension CodableMovieStore: MovieStore {
     public func deleteCache(completion: @escaping (Error?) -> Void) {
-        guard FileManager.default.fileExists(atPath: storeURL.path) else {
-            completion(nil)
-            return
-        }
-        
-        do {
-            try FileManager.default.removeItem(at: storeURL)
-            completion(nil)
-        } catch {
-            completion(error)
+        let storeURL = self.storeURL
+        queue.async(flags: .barrier) {
+            guard FileManager.default.fileExists(atPath: storeURL.path) else {
+                completion(nil)
+                return
+            }
+            
+            do {
+                try FileManager.default.removeItem(at: storeURL)
+                completion(nil)
+            } catch {
+                completion(error)
+            }
         }
     }
     
     public func insert(movieRoot: LocalMovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void) {
-        let encoder = JSONEncoder()
-        let codableMovieRoot = CodableLocalMovieRoot(page: movieRoot.page,
-                                                     results: movieRoot.results.map { CodableLocalMovie(localMovie: $0) })
-        do {
-            let encoded = try encoder.encode(Cache(timestamp: timestamp, movieRoot: codableMovieRoot))
-            try encoded.write(to: storeURL)
-            completion(nil)
-        } catch {
-            completion(error)
+        let storeURL = self.storeURL
+        queue.async(flags: .barrier) {
+            let encoder = JSONEncoder()
+            let codableMovieRoot = CodableLocalMovieRoot(page: movieRoot.page,
+                                                         results: movieRoot.results.map { CodableLocalMovie(localMovie: $0) })
+            do {
+                let encoded = try encoder.encode(Cache(timestamp: timestamp, movieRoot: codableMovieRoot))
+                try encoded.write(to: storeURL)
+                completion(nil)
+            } catch {
+                completion(error)
+            }
         }
     }
     
     public func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date?), Error>) -> Void) {
-        guard let data = try? Data(contentsOf: storeURL) else {
-            completion(.success((nil, nil)))
-            return
+        let storeURL = self.storeURL
+        queue.async {
+            guard let data = try? Data(contentsOf: storeURL) else {
+                completion(.success((nil, nil)))
+                return
+            }
+            
+            do {
+                let decoder = JSONDecoder()
+                let cache = try decoder.decode(Cache.self, from: data)
+                completion(.success((cache.movieRoot.mapToLocalMovieRoot(), cache.timestamp)))
+            } catch {
+                completion(.failure(error))
+            }
         }
         
-        do {
-            let decoder = JSONDecoder()
-            let cache = try decoder.decode(Cache.self, from: data)
-            completion(.success((cache.movieRoot.mapToLocalMovieRoot(), cache.timestamp)))
-        } catch {
-            completion(.failure(error))
-        }
     }
 }
