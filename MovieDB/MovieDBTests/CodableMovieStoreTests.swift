@@ -10,29 +10,6 @@ import XCTest
 import MovieDB
 
 class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
-    func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
-        
-    }
-    
-    func test_insert_deliversNoErrorOnEmptyCache() {
-        
-    }
-    
-    func test_insert_deliversNoErrorOnNonEmptyCache() {
-        
-    }
-    
-    func test_delete_deliversNoErrorOnEmptyCache() {
-        
-    }
-    
-    func test_delete_hasNoSideEffectsOnEmptyCache() {
-        
-    }
-    
-    func test_delete_deliversNoErrorOnNonEmptyCache() {
-        
-    }
     
     override func setUp() {
         super.setUp()
@@ -50,7 +27,7 @@ class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
-    func test_retrieve_hasNoSideEffectOnEmptyCacheWhenCalledTwice() {
+    func test_retrieve_hasNoSideEffectsOnEmptyCache() {
         let sut = makeSUT()
         
         expect(sut: sut, toRetrieveTwice: .success((nil, nil)))
@@ -87,6 +64,16 @@ class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
         expect(sut: sut, toRetrieveTwice: .failure(NSError(domain: "domain", code: 1, userInfo: nil)))
     }
     
+    func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
+        let sut = makeSUT()
+        let expectedLocalMovieRoot = LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()])
+        let expectedDate = Date()
+        
+        insert(sut: sut, localMovieRoot: expectedLocalMovieRoot, timestamp: expectedDate)
+        
+        expect(sut: sut, toRetrieveTwice: .success((expectedLocalMovieRoot, expectedDate)))
+    }
+    
     func test_insert_overridesPreviouslyInsertedCacheValues() {
         let sut = makeSUT()
         let latestLocalMovieRoot = LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()])
@@ -116,12 +103,28 @@ class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
+    func test_insert_deliversNoErrorOnEmptyCache() {
+        let sut = makeSUT()
+        
+        let error = insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_insert_deliversNoErrorOnNonEmptyCache() {
+        let sut = makeSUT()
+        
+        insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        let error = insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        
+        XCTAssertNil(error)
+    }
+    
     func test_delete_emptiesPreviouslyInsertedCache() {
         let sut = makeSUT()
         
-        let error = deleteCache(sut: sut)
+        deleteCache(sut: sut)
         
-        XCTAssertNil(error, "Expected to delete successfully")
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
@@ -139,6 +142,32 @@ class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
         deleteCache(sut: sut)
         
         expect(sut: sut, withResult: .success((nil, nil)))
+    }
+    
+    func test_delete_deliversNoErrorOnEmptyCache() {
+        let sut = makeSUT()
+        
+        let error = deleteCache(sut: sut)
+        
+        XCTAssertNil(error)
+    }
+    
+    func test_delete_hasNoSideEffectsOnEmptyCache() {
+        let sut = makeSUT()
+        
+        deleteCache(sut: sut)
+        deleteCache(sut: sut)
+        
+        expect(sut: sut, withResult: .success((nil, nil)))
+    }
+    
+    func test_delete_deliversNoErrorOnNonEmptyCache() {
+        let sut = makeSUT()
+        
+        insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        let error = deleteCache(sut: sut)
+        
+        XCTAssertNil(error)
     }
     
     func test_storeSideEffects_runSerially() {

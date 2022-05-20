@@ -9,9 +9,9 @@ import Foundation
 
 protocol MovieStoreSpecs {
     func test_retrieve_deliversEmptyOnEmptyCache()
-    func test_retrieve_hasNoSideEffectOnEmptyCacheWhenCalledTwice()
-    func test_retrieve_deliversFoundValuesOnNonEmptyCache()
     func test_retrieve_hasNoSideEffectsOnNonEmptyCache()
+    func test_retrieve_deliversFoundValuesOnNonEmptyCache()
+    func test_retrieve_hasNoSideEffectsOnEmptyCache()
     
     func test_insert_overridesPreviouslyInsertedCacheValues()
     func test_insert_deliversNoErrorOnEmptyCache()
@@ -21,8 +21,7 @@ protocol MovieStoreSpecs {
     func test_delete_deliversNoErrorOnEmptyCache()
     func test_delete_hasNoSideEffectsOnEmptyCache()
     func test_delete_deliversNoErrorOnNonEmptyCache()
-
-
+    
     func test_storeSideEffects_runSerially()
 }
 
