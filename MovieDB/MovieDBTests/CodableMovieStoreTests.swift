@@ -72,16 +72,30 @@ class CodableMovieStore: MovieStore {
     }
     
     func deleteCache(completion: @escaping (Error?) -> Void) {
+        guard FileManager.default.fileExists(atPath: storeURL.path) else {
+            completion(nil)
+            return
+        }
         
+        do {
+            try FileManager.default.removeItem(at: storeURL)
+            completion(nil)
+        } catch {
+            completion(error)
+        }
     }
     
     func insert(movieRoot: LocalMovieRoot, timestamp: Date, completion: @escaping (Error?) -> Void) {
         let encoder = JSONEncoder()
         let codableMovieRoot = CodableLocalMovieRoot(page: movieRoot.page,
                                                      results: movieRoot.results.map { CodableLocalMovie(localMovie: $0) })
-        let encoded = try! encoder.encode(Cache(timestamp: timestamp, movieRoot: codableMovieRoot))
-        try! encoded.write(to: storeURL)
-        completion(nil)
+        do {
+            let encoded = try encoder.encode(Cache(timestamp: timestamp, movieRoot: codableMovieRoot))
+            try encoded.write(to: storeURL)
+            completion(nil)
+        } catch {
+            completion(error)
+        }
     }
     
     func retrieve(completion: @escaping (Result<(LocalMovieRoot?, Date?), Error>) -> Void) {
@@ -157,14 +171,49 @@ class CodableMovieStoreTests: XCTestCase {
     
     func test_insert_overridesPreviouslyInsertedCacheValues() {
         let sut = makeSUT()
-        let firstLocalMovieRoot = LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()])
         let latestLocalMovieRoot = LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()])
         let latestTimestamp = Date()
         
-        insert(sut: sut, localMovieRoot: firstLocalMovieRoot, timestamp: Date())
+        insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
         insert(sut: sut, localMovieRoot: latestLocalMovieRoot, timestamp: latestTimestamp)
         
         expect(sut: sut, withResult: .success((latestLocalMovieRoot, latestTimestamp)))
+    }
+    
+    func test_insert_deliversErrorOnInsertionError() {
+        let url = URL(string: "#@invalid/store-url")!
+        let sut = makeSUT(url: url)
+        
+        let error = insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        
+        XCTAssertNotNil(error)
+        expect(sut: sut, withResult: .success((nil, nil)))
+    }
+    
+    func test_delete_emptiesPreviouslyInsertedCache() {
+        let sut = makeSUT()
+        let exp = expectation(description: "Wait for deletion")
+        
+        sut.deleteCache { error in
+            XCTAssertNil(error, "Expected to delete successfully")
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        expect(sut: sut, withResult: .success((nil, nil)))
+    }
+    
+    func test_delete_deliversErrorOnDeletionError() {
+        let sut = makeSUT(url: FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!)
+        let exp = expectation(description: "Wait for deletion")
+        
+        sut.deleteCache { error in
+            XCTAssertNotNil(error, "Expected to not delete successfully")
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+        expect(sut: sut, withResult: .success((nil, nil)))
     }
     
     @discardableResult
