@@ -155,6 +155,19 @@ class CodableMovieStoreTests: XCTestCase {
         expect(sut: sut, toRetrieveTwice: .failure(NSError(domain: "domain", code: 1, userInfo: nil)))
     }
     
+    func test_insert_overridesPreviouslyInsertedCacheValues() {
+        let sut = makeSUT()
+        let firstLocalMovieRoot = LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()])
+        let latestLocalMovieRoot = LocalMovieRoot(page: 2, results: [makeUniqueLocalMovie()])
+        let latestTimestamp = Date()
+        
+        insert(sut: sut, localMovieRoot: firstLocalMovieRoot, timestamp: Date())
+        insert(sut: sut, localMovieRoot: latestLocalMovieRoot, timestamp: latestTimestamp)
+        
+        expect(sut: sut, withResult: .success((latestLocalMovieRoot, latestTimestamp)))
+    }
+    
+    @discardableResult
     private func insert(sut: CodableMovieStore, localMovieRoot: LocalMovieRoot, timestamp: Date) -> Error? {
         let exp = expectation(description: "Wait for movie insertion")
         var receivedError: Error?
