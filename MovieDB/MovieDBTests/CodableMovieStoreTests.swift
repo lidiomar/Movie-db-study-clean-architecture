@@ -9,7 +9,30 @@ import Foundation
 import XCTest
 import MovieDB
 
-class CodableMovieStoreTests: XCTestCase {
+class CodableMovieStoreTests: XCTestCase, FailableMovieStoreSpecs {
+    func test_retrieve_hasNoSideEffectsOnNonEmptyCache() {
+        
+    }
+    
+    func test_insert_deliversNoErrorOnEmptyCache() {
+        
+    }
+    
+    func test_insert_deliversNoErrorOnNonEmptyCache() {
+        
+    }
+    
+    func test_delete_deliversNoErrorOnEmptyCache() {
+        
+    }
+    
+    func test_delete_hasNoSideEffectsOnEmptyCache() {
+        
+    }
+    
+    func test_delete_deliversNoErrorOnNonEmptyCache() {
+        
+    }
     
     override func setUp() {
         super.setUp()
@@ -82,6 +105,14 @@ class CodableMovieStoreTests: XCTestCase {
         let error = insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
         
         XCTAssertNotNil(error)
+    }
+    
+    func test_insert_hasNoSideEffectsOnFailure() {
+        let url = URL(string: "#@invalid/store-url")!
+        let sut = makeSUT(url: url)
+        
+        insert(sut: sut, localMovieRoot: LocalMovieRoot(page: 1, results: [makeUniqueLocalMovie()]), timestamp: Date())
+        
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
@@ -100,6 +131,13 @@ class CodableMovieStoreTests: XCTestCase {
         let error = deleteCache(sut: sut)
         
         XCTAssertNotNil(error, "Expected to not delete successfully")
+    }
+    
+    func test_delete_hasNoSideEffectsOnFailure() {
+        let sut = makeSUT(url: FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!)
+        
+        deleteCache(sut: sut)
+        
         expect(sut: sut, withResult: .success((nil, nil)))
     }
     
@@ -144,6 +182,7 @@ class CodableMovieStoreTests: XCTestCase {
         return receivedError
     }
     
+    @discardableResult
     private func deleteCache(sut: MovieStore) -> Error? {
         let exp = expectation(description: "Wait for deletion")
         var receivedError: Error?
