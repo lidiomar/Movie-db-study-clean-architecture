@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="19574" systemVersion="21D49" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="ManagedCache" representedClassName=".ManagedCache" syncable="YES" codeGenerationType="class">
+        <attribute name="timestamp" attributeType="Date" usesScalarValueType="NO"/>
+        <relationship name="cache" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="ManagedLocalMovieRoot" inverseName="cache" inverseEntity="ManagedLocalMovieRoot"/>
+    </entity>
+    <entity name="ManagedLocalMovie" representedClassName=".ManagedLocalMovie" syncable="YES">
+        <attribute name="genreIds" attributeType="Transformable"/>
+        <attribute name="id" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <attribute name="overview" attributeType="String"/>
+        <attribute name="popularity" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="posterPath" optional="YES" attributeType="String"/>
+        <attribute name="releaseDate" attributeType="String"/>
+        <attribute name="title" attributeType="String"/>
+        <attribute name="voteAverage" attributeType="Double" defaultValueString="0.0" usesScalarValueType="YES"/>
+        <attribute name="voteCount" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="movieRoot" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedLocalMovieRoot" inverseName="movies" inverseEntity="ManagedLocalMovieRoot"/>
+    </entity>
+    <entity name="ManagedLocalMovieRoot" representedClassName=".ManagedLocalMovieRoot" syncable="YES">
+        <attribute name="page" attributeType="Integer 64" defaultValueString="0" usesScalarValueType="YES"/>
+        <relationship name="cache" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedCache" inverseName="cache" inverseEntity="ManagedCache"/>
+        <relationship name="movies" maxCount="1" deletionRule="Nullify" destinationEntity="ManagedLocalMovie" inverseName="movieRoot" inverseEntity="ManagedLocalMovie"/>
+    </entity>
+    <elements>
+        <element name="ManagedLocalMovie" positionX="-63" positionY="-18" width="128" height="193"/>
+        <element name="ManagedLocalMovieRoot" positionX="71.9322509765625" positionY="271.3703002929688" width="224.6756591796875" height="58"/>
+        <element name="ManagedCache" positionX="72" positionY="162" width="128" height="59"/>
+    </elements>
+</model>
