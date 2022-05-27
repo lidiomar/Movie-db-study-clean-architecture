@@ -19,6 +19,7 @@
 		7012B6D528415ABC00A2A79F /* ManagedLocalMovie.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7012B6CF28415ABC00A2A79F /* ManagedLocalMovie.swift */; };
 		7012B6D8284164DE00A2A79F /* CoreDataMovieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7012B6D7284164DE00A2A79F /* CoreDataMovieStore.swift */; };
 		7012B6DA2841654F00A2A79F /* CoreDataHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7012B6D92841654F00A2A79F /* CoreDataHelpers.swift */; };
+		7012B6DC28416C1500A2A79F /* CoreDataMovieStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7012B6DB28416C1500A2A79F /* CoreDataMovieStoreTests.swift */; };
 		7041FBC12837D85B00BC1737 /* CodableMovieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC02837D85B00BC1737 /* CodableMovieStore.swift */; };
 		7041FBC428381C1600BC1737 /* MovieStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC328381C1600BC1737 /* MovieStoreSpecs.swift */; };
 		7041FBC62838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC52838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift */; };
@@ -72,6 +73,7 @@
 		7012B6CF28415ABC00A2A79F /* ManagedLocalMovie.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ManagedLocalMovie.swift; sourceTree = "<group>"; };
 		7012B6D7284164DE00A2A79F /* CoreDataMovieStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataMovieStore.swift; sourceTree = "<group>"; };
 		7012B6D92841654F00A2A79F /* CoreDataHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CoreDataHelpers.swift; sourceTree = "<group>"; };
+		7012B6DB28416C1500A2A79F /* CoreDataMovieStoreTests.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CoreDataMovieStoreTests.swift; sourceTree = "<group>"; };
 		7041FBC02837D85B00BC1737 /* CodableMovieStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableMovieStore.swift; sourceTree = "<group>"; };
 		7041FBC328381C1600BC1737 /* MovieStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieStoreSpecs.swift; sourceTree = "<group>"; };
 		7041FBC52838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MovieStoreSpecs.swift"; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				7011E90828243DE70051AB36 /* URLSessionHTTPClientTests.swift */,
 				708EC9EC282995E000CF3F28 /* CacheMovieUseCaseTests.swift */,
 				704A6DBC2835D60200EC6168 /* CodableMovieStoreTests.swift */,
+				7012B6DB28416C1500A2A79F /* CoreDataMovieStoreTests.swift */,
 			);
 			path = MovieDBTests;
 			sourceTree = "<group>";
@@ -455,6 +458,7 @@
 				7041FBC828382AF000BC1737 /* XCTestCase+FailableRetrieveMovieStoreSpecs.swift in Sources */,
 				708EC9ED282995E000CF3F28 /* CacheMovieUseCaseTests.swift in Sources */,
 				7041FBCA28382BBA00BC1737 /* XCTestCase+FailableInsertMovieStoreSpecs.swift in Sources */,
+				7012B6DC28416C1500A2A79F /* CoreDataMovieStoreTests.swift in Sources */,
 				7041FBC428381C1600BC1737 /* MovieStoreSpecs.swift in Sources */,
 				704A6DBD2835D60200EC6168 /* CodableMovieStoreTests.swift in Sources */,
 				7095F6D72821AFB800067D58 /* RemoteMovieLoaderTests.swift in Sources */,
