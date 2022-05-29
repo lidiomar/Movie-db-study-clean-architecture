@@ -11,7 +11,7 @@ import XCTest
 class MovieDBiOSTests: XCTestCase {
 
     func test_ok() {
-        XCTAssertTrue(1 == 1)
+        XCTAssertEqual(SimpleClass.text, "Hello world")
     }
 
 }
