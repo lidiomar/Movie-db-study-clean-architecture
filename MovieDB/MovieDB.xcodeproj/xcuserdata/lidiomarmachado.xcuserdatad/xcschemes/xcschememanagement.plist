@@ -17,7 +17,7 @@
 		<key>MovieDBAPIEndToEndTests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>1</integer>
+			<integer>3</integer>
 		</dict>
 		<key>MovieDBCacheIntegrationTests.xcscheme_^#shared#^_</key>
 		<dict>
@@ -27,6 +27,11 @@
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
 	<dict>
+		<key>7011E90F28247B940051AB36</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
 		<key>7095F6B12821972200067D58</key>
 		<dict>
 			<key>primary</key>
