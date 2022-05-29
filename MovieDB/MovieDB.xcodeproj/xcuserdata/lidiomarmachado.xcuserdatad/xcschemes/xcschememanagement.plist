@@ -4,7 +4,12 @@
 <dict>
 	<key>SchemeUserState</key>
 	<dict>
-		<key>CI.xcscheme_^#shared#^_</key>
+		<key>CI_iOS.xcscheme</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>2</integer>
+		</dict>
+		<key>CI_macOS.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
 			<integer>1</integer>
@@ -17,12 +22,17 @@
 		<key>MovieDBAPIEndToEndTests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>3</integer>
+			<integer>4</integer>
 		</dict>
 		<key>MovieDBCacheIntegrationTests.xcscheme_^#shared#^_</key>
 		<dict>
 			<key>orderHint</key>
-			<integer>2</integer>
+			<integer>3</integer>
+		</dict>
+		<key>MovieDBiOS.xcscheme_^#shared#^_</key>
+		<dict>
+			<key>orderHint</key>
+			<integer>5</integer>
 		</dict>
 	</dict>
 	<key>SuppressBuildableAutocreation</key>
@@ -43,6 +53,16 @@
 			<true/>
 		</dict>
 		<key>70F64AB02843DAA300102ECF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>70F64AC02843EF5D00102ECF</key>
+		<dict>
+			<key>primary</key>
+			<true/>
+		</dict>
+		<key>70F64AC72843EF5E00102ECF</key>
 		<dict>
 			<key>primary</key>
 			<true/>
