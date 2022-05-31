@@ -32,6 +32,17 @@ class PopularMoviesViewControllerTests: XCTestCase {
         assertThat(sut: sut, isRendering: [movie], at: 0)
     }
     
+    func test_loadMoviesCompletion_doesNotAlterCurrentRenderingStateOnError() {
+        let (sut, loader) = makeSUT()
+        let movie = makeUniqueMovie()
+        sut.loadViewIfNeeded()
+        
+        loader.complete(withMovieRoot: MovieRoot(page: 1, results: [movie]), at: 0)
+        loader.complete(withError: anyError(), at: 0)
+        
+        assertThat(sut: sut, isRendering: [movie], at: 0)
+    }
+    
     private func assertThat(sut: PopularMoviesViewController, isRendering movies: [Movie], at index: Int) {
        
         guard let cell = sut.movieCellAt(row: index),
@@ -67,6 +78,10 @@ class PopularMoviesViewControllerTests: XCTestCase {
                      voteCount: 0,
                      voteAverage: 0.0)
     }
+    
+    private func anyError() -> NSError {
+        return NSError(domain: "domain", code: 0, userInfo: nil)
+    }
 }
 
 private extension PopularMoviesViewController {
@@ -94,5 +109,9 @@ class MovieLoaderSpy: MovieLoader {
     
     func complete(withMovieRoot movieRoot: MovieRoot, at index: Int) {
         completions[index](.success(movieRoot))
+    }
+    
+    func complete(withError error: Error, at index: Int) {
+        completions[index](.failure(error))
     }
 }
