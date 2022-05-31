@@ -57,10 +57,11 @@ extension PopularMoviesViewController {
         cell.score.text = movie.score
         cell.releaseYear.text = movie.releaseYear
         
-        let task = imageDataLoader?.loadImageData(url: movie.thumbnailURL) { result in
+        let task = imageDataLoader?.loadImageData(url: movie.thumbnailURL) { [weak cell] result in
             let data: Data? = try? result.get()
             let image = data.map(UIImage.init) ?? nil
-            cell.thumbnail.image = image
+            cell?.thumbnail.image = image
+            print(cell?.thumbnail.image == nil)
         }
         imageDataLoaderTasks[indexPath] = task
         

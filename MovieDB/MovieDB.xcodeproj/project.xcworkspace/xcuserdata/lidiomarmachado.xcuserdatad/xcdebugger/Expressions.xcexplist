@@ -3,22 +3,6 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "UITableView.dequeueReusableCell&lt;&#x3c4;_0_0&gt;():UITableView+Dequeueing.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "String(describing: T.self)">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "currentDate">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
          <PersistentStrings>
             <PersistentString
@@ -27,21 +11,13 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "closure #2 in PopularMoviesViewController.bindViewModel():PopularMoviesViewController.swift">
-      </ContextState>
-      <ContextState
-         contextName = "MovieStoreSpy.retrieve(completion:):CacheMovieUseCaseTests.swift">
+         contextName = "PopularMoviesViewController.renderedImage(at:):PopularMoviesViewControllerTests.swift">
          <PersistentStrings>
             <PersistentString
-               value = "receivedMessages">
+               value = "cell.title.text">
             </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "closure #1 in PopularMoviesViewModel.loadMovie():PopularMoviesViewModel.swift">
-         <PersistentStrings>
             <PersistentString
-               value = "self?.successMovieCompletion">
+               value = "cell?.thumbnail">
             </PersistentString>
          </PersistentStrings>
       </ContextState>
@@ -54,12 +30,23 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "PopularMoviesViewController.tableView(_:cellForRowAt:):PopularMoviesViewController.swift">
+         contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
          <PersistentStrings>
             <PersistentString
-               value = "imageDataLoader">
+               value = "currentDate">
             </PersistentString>
          </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MovieStoreSpy.retrieve(completion:):CacheMovieUseCaseTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "receivedMessages">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in PopularMoviesViewController.tableView(_:cellForRowAt:):PopularMoviesViewController.swift">
       </ContextState>
       <ContextState
          contextName = "CacheMovieUseCaseTests.test_load_deletesCacheOnRetrievalError():CacheMovieUseCaseTests.swift">
@@ -69,6 +56,41 @@
             </PersistentString>
             <PersistentString
                value = "movieStore.receivedMessages">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in PopularMoviesViewModel.loadMovie():PopularMoviesViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self?.successMovieCompletion">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MovieLoaderSpy.complete(withImageData:at:):PopularMoviesViewControllerTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "image">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in PopularMoviesViewController.bindViewModel():PopularMoviesViewController.swift">
+      </ContextState>
+      <ContextState
+         contextName = "PopularMoviesViewController.tableView(_:cellForRowAt:):PopularMoviesViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "imageDataLoader">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "UITableView.dequeueReusableCell&lt;&#x3c4;_0_0&gt;():UITableView+Dequeueing.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "String(describing: T.self)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

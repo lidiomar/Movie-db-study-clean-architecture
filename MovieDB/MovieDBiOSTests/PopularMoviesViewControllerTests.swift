@@ -71,6 +71,19 @@ class PopularMoviesViewControllerTests: XCTestCase {
         XCTAssertTrue(loader.cancelledImageUrls[0]!.absoluteString.contains(movie.posterPath!))
     }
     
+    func test_feedImageView_rendersImageLoadedFromURL() {
+        let (sut, loader) = makeSUT()
+        let movie = makeUniqueMovie()
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        
+        sut.loadViewIfNeeded()
+        loader.complete(withMovieRoot: MovieRoot(page: 1, results: [movie]), at: 0)
+        let cell = sut.simulateCellVisible(at: 0)
+        loader.complete(withImageData: imageData, at: 0)
+        
+        XCTAssertEqual(cell.renderedImage(), imageData)
+    }
+    
     private func assertThat(sut: PopularMoviesViewController, isRendering movies: [Movie], at index: Int) {
        
         guard let cell = sut.movieCellAt(row: index),
@@ -113,6 +126,19 @@ class PopularMoviesViewControllerTests: XCTestCase {
     }
 }
 
+private extension UIImage {
+    static func make(withColor color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()!
+        context.setFillColor(color.cgColor)
+        context.fill(rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
+    }
+}
+
 private extension PopularMoviesViewController {
     
     func numberOfRenderedMovies() -> Int {
@@ -140,6 +166,12 @@ private extension PopularMoviesViewController {
     
     private var movieSection: Int {
         return 0
+    }
+}
+
+private extension MovieTableViewCell {
+    func renderedImage() -> Data? {
+        return thumbnail.image?.pngData()
     }
 }
 
