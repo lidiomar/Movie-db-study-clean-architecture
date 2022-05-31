@@ -54,6 +54,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "PopularMoviesViewController.tableView(_:cellForRowAt:):PopularMoviesViewController.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "imageDataLoader">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "CacheMovieUseCaseTests.test_load_deletesCacheOnRetrievalError():CacheMovieUseCaseTests.swift">
          <PersistentStrings>
             <PersistentString

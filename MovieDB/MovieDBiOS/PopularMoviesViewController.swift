@@ -8,12 +8,18 @@
 import UIKit
 import MovieDB
 
+protocol MovieImageDataLoaderTask {
+    func cancel()
+}
+
 protocol MovieImageDataLoader {
-    func loadImageData(url: URL, completion: (Result<Data, Error>) -> Void)
+    func loadImageData(url: URL?, completion: @escaping (Result<Data, Error>) -> Void) -> MovieImageDataLoaderTask
 }
 
 class PopularMoviesViewController: UITableViewController {
     var viewModel: PopularMoviesViewModel?
+    var imageDataLoader: MovieImageDataLoader?
+    var imageDataLoaderTasks: [IndexPath: MovieImageDataLoaderTask] = [:]
     
     private var movies: [MovieModel] = [] {
         didSet {
@@ -51,6 +57,21 @@ extension PopularMoviesViewController {
         cell.score.text = movie.score
         cell.releaseYear.text = movie.releaseYear
         
+        let task = imageDataLoader?.loadImageData(url: movie.thumbnailURL) { result in
+            let data: Data? = try? result.get()
+            let image = data.map(UIImage.init) ?? nil
+            cell.thumbnail.image = image
+        }
+        imageDataLoaderTasks[indexPath] = task
+        
         return cell
+    }
+    
+    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+        cancelTask(forRowAt: indexPath)
+    }
+    
+    private func cancelTask(forRowAt indexPath: IndexPath) {
+        imageDataLoaderTasks[indexPath]?.cancel()
     }
 }
