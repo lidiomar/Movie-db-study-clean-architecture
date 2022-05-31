@@ -9,16 +9,12 @@ import UIKit
 import MovieDB
 
 class PopularMoviesViewController: UITableViewController {
-    private var viewModel: PopularMoviesViewModel?
+    var viewModel: PopularMoviesViewModel?
+    
     private var movies: [Movie] = [] {
         didSet {
             tableView.reloadData()
         }
-    }
-    
-    convenience init(viewModel: PopularMoviesViewModel) {
-        self.init()
-        self.viewModel = viewModel
     }
     
     override func viewDidLoad() {
@@ -45,6 +41,12 @@ extension PopularMoviesViewController {
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        return UITableViewCell()
+        let cell: MovieTableViewCell = tableView.dequeueReusableCell()
+        let movie = movies[indexPath.row]
+        cell.popularity.text = String(movie.popularity)
+        cell.title.text = movie.title
+        cell.score.text = String(movie.voteAverage)
+        cell.releaseYear.text = movie.releaseDate
+        return cell
     }
 }

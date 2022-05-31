@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="rdu-uL-dXu">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="19529" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="asP-5H-wLZ">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="19519"/>
@@ -15,7 +15,7 @@
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <color key="backgroundColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="MovieCell" rowHeight="360" id="bKE-iA-fZv" customClass="MovieTableViewCell" customModule="MovieDBiOS" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="MovieTableViewCell" rowHeight="360" id="bKE-iA-fZv" customClass="MovieTableViewCell" customModule="MovieDBiOS" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44.5" width="414" height="360"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="bKE-iA-fZv" id="kgo-cM-SKm">
@@ -25,12 +25,6 @@
                                         <view contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="XYs-4S-6B8">
                                             <rect key="frame" x="20" y="16" width="374" height="328"/>
                                             <subviews>
-                                                <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="natural" lineBreakMode="tailTruncation" numberOfLines="2" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="xXB-iX-0uh">
-                                                    <rect key="frame" x="16" y="234" width="342" height="0.0"/>
-                                                    <fontDescription key="fontDescription" type="system" pointSize="17"/>
-                                                    <color key="textColor" white="0.33333333329999998" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
-                                                    <nil key="highlightedColor"/>
-                                                </label>
                                                 <label opaque="NO" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" minimumScaleFactor="0.5" translatesAutoresizingMaskIntoConstraints="NO" id="apS-hg-8lT">
                                                     <rect key="frame" x="16" y="26" width="342" height="0.0"/>
                                                     <fontDescription key="fontDescription" type="boldSystem" pointSize="20"/>
@@ -74,12 +68,9 @@
                                                 <constraint firstItem="apS-hg-8lT" firstAttribute="top" secondItem="XYs-4S-6B8" secondAttribute="top" constant="26" id="9Bu-c0-Vp1"/>
                                                 <constraint firstAttribute="trailing" secondItem="apS-hg-8lT" secondAttribute="trailing" constant="16" id="Whd-Ip-SvI"/>
                                                 <constraint firstItem="aHG-zB-ceP" firstAttribute="top" secondItem="apS-hg-8lT" secondAttribute="bottom" constant="8" id="XPi-PI-NMk"/>
-                                                <constraint firstAttribute="trailing" secondItem="xXB-iX-0uh" secondAttribute="trailing" constant="16" id="ehW-Ye-sT8"/>
-                                                <constraint firstItem="xXB-iX-0uh" firstAttribute="leading" secondItem="XYs-4S-6B8" secondAttribute="leading" constant="16" id="lR4-EE-i8d"/>
                                                 <constraint firstItem="apS-hg-8lT" firstAttribute="leading" secondItem="XYs-4S-6B8" secondAttribute="leading" constant="16" id="li0-PL-vCw"/>
                                                 <constraint firstItem="ojU-e8-kwi" firstAttribute="leading" secondItem="aHG-zB-ceP" secondAttribute="trailing" constant="16" id="mdU-61-C9b"/>
                                                 <constraint firstAttribute="trailing" relation="greaterThanOrEqual" secondItem="ojU-e8-kwi" secondAttribute="trailing" constant="16" id="qWv-fz-qXl"/>
-                                                <constraint firstItem="xXB-iX-0uh" firstAttribute="top" secondItem="aHG-zB-ceP" secondAttribute="bottom" id="qXb-cn-SOx"/>
                                                 <constraint firstItem="aHG-zB-ceP" firstAttribute="leading" secondItem="XYs-4S-6B8" secondAttribute="leading" constant="16" id="uf0-m8-wpp"/>
                                                 <constraint firstItem="ojU-e8-kwi" firstAttribute="centerY" secondItem="aHG-zB-ceP" secondAttribute="centerY" id="y6p-y9-v3K"/>
                                             </constraints>
@@ -99,7 +90,6 @@
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="genre" destination="xXB-iX-0uh" id="16h-kY-3uJ"/>
                                     <outlet property="popularity" destination="nkG-C5-yHg" id="ASy-H7-c2s"/>
                                     <outlet property="releaseYear" destination="rhO-sA-dIz" id="2Wy-ru-h8A"/>
                                     <outlet property="score" destination="Pyr-W9-t9y" id="I4Y-UH-udJ"/>
@@ -116,31 +106,10 @@
                     <navigationItem key="navigationItem" title="The Movie DB" id="5mH-g1-Ola">
                         <barButtonItem key="backBarButtonItem" title=" " id="S0z-bk-cnb"/>
                     </navigationItem>
-                    <connections>
-                        <outlet property="tableView" destination="kMt-YH-PEC" id="Vst-FZ-75S"/>
-                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="c5e-cQ-MTU" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
-            <point key="canvasLocation" x="513.04347826086962" y="118.52678571428571"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="g1u-UH-RML">
-            <objects>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="rdu-uL-dXu" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" id="ylb-Bz-JGR">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="asP-5H-wLZ" kind="relationship" relationship="rootViewController" id="yQR-Ft-DFH"/>
-                    </connections>
-                </navigationController>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="pAs-K9-chg" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-            </objects>
-            <point key="canvasLocation" x="-286" y="119"/>
+            <point key="canvasLocation" x="-236" y="127"/>
         </scene>
     </scenes>
 </document>

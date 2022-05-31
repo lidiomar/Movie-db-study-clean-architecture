@@ -20,20 +20,40 @@ class PopularMoviesViewControllerTests: XCTestCase {
     
     func test_loadMoviesCompletion_rendersSuccessfullyLoadedMovies() {
         let (sut, loader) = makeSUT()
+        let movie = makeUniqueMovie()
         sut.loadViewIfNeeded()
         
         XCTAssertEqual(sut.numberOfRenderedMovies(), 0)
         
-        loader.complete(withMovieRoot: MovieRoot(page: 1, results: [makeUniqueMovie()]), at: 0)
+        loader.complete(withMovieRoot: MovieRoot(page: 1, results: [movie]), at: 0)
         
         XCTAssertEqual(sut.numberOfRenderedMovies(), 1)
+        
+        assertThat(sut: sut, isRendering: [movie], at: 0)
+    }
+    
+    private func assertThat(sut: PopularMoviesViewController, isRendering movies: [Movie], at index: Int) {
+       
+        guard let cell = sut.movieCellAt(row: index),
+              let movieTableViewCell = cell as? MovieTableViewCell else { return }
+        
+        movies.forEach {
+            XCTAssertEqual(movieTableViewCell.title.text, $0.title)
+            XCTAssertEqual(movieTableViewCell.popularity.text, String($0.popularity))
+            XCTAssertEqual(movieTableViewCell.releaseYear.text, $0.releaseDate)
+            XCTAssertEqual(movieTableViewCell.score.text, String($0.voteAverage))
+        }
+        
     }
     
     private func makeSUT() -> (PopularMoviesViewController, MovieLoaderSpy) {
         let spy = MovieLoaderSpy()
         let viewModel = PopularMoviesViewModel(movieLoader: spy)
-        let popularMoviesViewController = PopularMoviesViewController(viewModel: viewModel)
-        return (popularMoviesViewController, spy)
+        let storyboard = UIStoryboard(name: "Movie", bundle: Bundle(for: PopularMoviesViewController.self))
+        let viewController = storyboard.instantiateViewController(withIdentifier: "PopularMoviesViewController") as! PopularMoviesViewController
+    
+        viewController.viewModel = viewModel
+        return (viewController, spy)
     }
     
     private func makeUniqueMovie() -> Movie {
@@ -53,6 +73,11 @@ private extension PopularMoviesViewController {
     
     func numberOfRenderedMovies() -> Int {
         tableView.numberOfRows(inSection: movieSection)
+    }
+    
+    func movieCellAt(row: Int) -> UITableViewCell? {
+        let datasource = tableView.dataSource
+        return datasource?.tableView(tableView, cellForRowAt: IndexPath(row: row, section: movieSection))
     }
     
     private var movieSection: Int {

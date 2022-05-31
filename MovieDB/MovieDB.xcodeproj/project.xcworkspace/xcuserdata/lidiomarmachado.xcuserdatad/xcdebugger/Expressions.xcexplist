@@ -3,6 +3,33 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "UITableView.dequeueReusableCell&lt;&#x3c4;_0_0&gt;():UITableView+Dequeueing.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "String(describing: T.self)">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "currentDate">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "httpClient">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #2 in PopularMoviesViewController.bindViewModel():PopularMoviesViewController.swift">
+      </ContextState>
+      <ContextState
          contextName = "MovieStoreSpy.retrieve(completion:):CacheMovieUseCaseTests.swift">
          <PersistentStrings>
             <PersistentString
@@ -19,23 +46,7 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
-         contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "currentDate">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
          contextName = "closure #1 in RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
-         <PersistentStrings>
-            <PersistentString
-               value = "httpClient">
-            </PersistentString>
-         </PersistentStrings>
-      </ContextState>
-      <ContextState
-         contextName = "RemoteMovieLoader.load(completion:):RemoteMovieLoader.swift">
          <PersistentStrings>
             <PersistentString
                value = "httpClient">
