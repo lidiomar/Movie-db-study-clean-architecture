@@ -8,10 +8,14 @@
 import UIKit
 import MovieDB
 
+protocol MovieImageDataLoader {
+    func loadImageData(url: URL, completion: (Result<Data, Error>) -> Void)
+}
+
 class PopularMoviesViewController: UITableViewController {
     var viewModel: PopularMoviesViewModel?
     
-    private var movies: [Movie] = [] {
+    private var movies: [MovieModel] = [] {
         didSet {
             tableView.reloadData()
         }
@@ -29,8 +33,7 @@ class PopularMoviesViewController: UITableViewController {
         }
         
         viewModel?.successMovieCompletion = { [weak self] movies in
-            guard let results = movies?.results, !results.isEmpty else { return }
-            self?.movies = results
+            self?.movies = movies
         }
     }
 }
@@ -43,10 +46,11 @@ extension PopularMoviesViewController {
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: MovieTableViewCell = tableView.dequeueReusableCell()
         let movie = movies[indexPath.row]
-        cell.popularity.text = String(movie.popularity)
+        cell.popularity.text = movie.popularity
         cell.title.text = movie.title
-        cell.score.text = String(movie.voteAverage)
-        cell.releaseYear.text = movie.releaseDate
+        cell.score.text = movie.score
+        cell.releaseYear.text = movie.releaseYear
+        
         return cell
     }
 }
