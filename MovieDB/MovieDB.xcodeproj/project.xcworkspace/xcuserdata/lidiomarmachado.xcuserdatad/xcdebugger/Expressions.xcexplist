@@ -11,6 +11,14 @@
          </PersistentStrings>
       </ContextState>
       <ContextState
+         contextName = "closure #1 in PopularMoviesViewModel.loadMovie():PopularMoviesViewModel.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "self?.successMovieCompletion">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "static ValidCachePolicy.validTimeStamp(_:):LocalMovieLoader.swift">
          <PersistentStrings>
             <PersistentString

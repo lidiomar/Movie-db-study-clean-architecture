@@ -8,15 +8,43 @@
 import UIKit
 import MovieDB
 
-public class PopularMoviesViewController: UIViewController {
-    private var loader: MovieLoader?
-    
-    public convenience init(loader: MovieLoader) {
-        self.init()
-        self.loader = loader
+class PopularMoviesViewController: UITableViewController {
+    private var viewModel: PopularMoviesViewModel?
+    private var movies: [Movie] = [] {
+        didSet {
+            tableView.reloadData()
+        }
     }
     
-    public override func viewDidLoad() {
-        loader?.load { _ in }
+    convenience init(viewModel: PopularMoviesViewModel) {
+        self.init()
+        self.viewModel = viewModel
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        bindViewModel()
+        viewModel?.loadMovie()
+    }
+    
+    private func bindViewModel() {
+        viewModel?.errorMovieCompletion = { error in
+            print(error)
+        }
+        
+        viewModel?.successMovieCompletion = { [weak self] movies in
+            guard let results = movies?.results, !results.isEmpty else { return }
+            self?.movies = results
+        }
+    }
+}
+
+extension PopularMoviesViewController {
+    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return self.movies.count
+    }
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        return UITableViewCell()
     }
 }
