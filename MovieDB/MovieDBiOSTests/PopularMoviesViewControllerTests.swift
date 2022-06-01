@@ -109,18 +109,6 @@ class PopularMoviesViewControllerTests: XCTestCase {
         return (viewController, spy)
     }
     
-    private func makeUniqueMovie() -> Movie {
-        return Movie(posterPath: "posterPath",
-                     overview: "An overview",
-                     releaseDate: "2018-09-09",
-                     genreIds: [1, 2],
-                     id: UUID().hashValue,
-                     title: "a title",
-                     popularity: 0.0,
-                     voteCount: 0,
-                     voteAverage: 0.0)
-    }
-    
     private func anyError() -> NSError {
         return NSError(domain: "domain", code: 0, userInfo: nil)
     }

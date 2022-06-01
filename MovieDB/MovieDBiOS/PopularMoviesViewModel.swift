@@ -26,30 +26,10 @@ class PopularMoviesViewModel {
                     self?.successMovieCompletion?([])
                     return
                 }
-                self?.successMovieCompletion?(movies.toMovieModel())
+                self?.successMovieCompletion?(PopularMoviesMapper.toMovieModel(movies))
             case let .failure(error):
                 self?.errorMovieCompletion?(error)
             }
         }
     }
-}
-
-private extension Array where Element == Movie {
-    func toMovieModel() -> [MovieModel] {
-        self.map { MovieModel(popularity: String($0.popularity),
-                              title: $0.title,
-                              score: String($0.voteAverage),
-                              releaseYear: $0.releaseDate,
-                              thumbnailURL: thumbURL(posterPath: $0.posterPath))}
-    }
-    
-    private func thumbURL(posterPath: String?) -> URL? {
-        guard let path = posterPath else {
-            return nil
-        }
-        return URL(string: "\(baseImageURL)\(imageWidth)\(path)")
-    }
-    
-    private var baseImageURL: String { "" }
-    private var imageWidth: String { "" }
 }
