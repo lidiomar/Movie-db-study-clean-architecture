@@ -19,10 +19,15 @@ public class RemoteImageDataLoader: MovieImageDataLoader {
     }
     
     public func loadImageData(url: URL?, completion: @escaping (Result<Data, Error>) -> Void) -> MovieImageDataLoaderTask {
-        guard let url = url else { return HTTPClientTask() }
-        
-        httpClient.get(url: url) { result in
-            completion(.failure(ImageDataLoaderError.connectivity))
+        let task = HTTPClientTaskWrapper(completion)
+        task.wrapped = httpClient.get(url: url!) { [weak self] result in
+            guard self != nil else { return }
+            task.complete(with: result
+                            .mapError { _ in ImageDataLoaderError.connectivity }
+                            .flatMap { (data, response) in
+                                let isValidResponse = response.isOK && !data.isEmpty
+                                return isValidResponse ? .success(data) : .failure(ImageDataLoaderError.invalidData)
+                            })
         }
         return HTTPClientTask()
     }
@@ -31,3 +36,28 @@ public class RemoteImageDataLoader: MovieImageDataLoader {
         func cancel() {}
     }
 }
+
+private final class HTTPClientTaskWrapper: MovieImageDataLoaderTask {
+    private var completion: ((Result<Data, Error>) -> Void)?
+    
+    var wrapped: HTTPClientTask?
+    
+    init(_ completion: @escaping (Result<Data, Error>) -> Void) {
+        self.completion = completion
+    }
+    
+    func complete(with result: (Result<Data, Error>)) {
+        completion?(result)
+    }
+    
+    func cancel() {
+        preventFurtherCompletions()
+        wrapped?.cancel()
+    }
+    
+    private func preventFurtherCompletions() {
+        completion = nil
+    }
+}
+
+

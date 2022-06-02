@@ -25,6 +25,7 @@
 		70168CF828484E820040D984 /* MovieImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70168CEF28483C6B0040D984 /* MovieImageDataLoader.swift */; };
 		70168CFA28484EC40040D984 /* RemoteImageDataLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70168CF928484EC40040D984 /* RemoteImageDataLoader.swift */; };
 		70168CFC28484F9B0040D984 /* RemoteImageDataLoaderTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70168CFB28484F9B0040D984 /* RemoteImageDataLoaderTests.swift */; };
+		70168CFF28491B3D0040D984 /* HTTPURLResponse+StatusCode.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70168CFE28491B3D0040D984 /* HTTPURLResponse+StatusCode.swift */; };
 		7041FBC12837D85B00BC1737 /* CodableMovieStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC02837D85B00BC1737 /* CodableMovieStore.swift */; };
 		7041FBC428381C1600BC1737 /* MovieStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC328381C1600BC1737 /* MovieStoreSpecs.swift */; };
 		7041FBC62838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7041FBC52838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift */; };
@@ -135,6 +136,7 @@
 		70168CF228483E620040D984 /* DispatchMainQueueDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DispatchMainQueueDecorator.swift; sourceTree = "<group>"; };
 		70168CF928484EC40040D984 /* RemoteImageDataLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoader.swift; sourceTree = "<group>"; };
 		70168CFB28484F9B0040D984 /* RemoteImageDataLoaderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteImageDataLoaderTests.swift; sourceTree = "<group>"; };
+		70168CFE28491B3D0040D984 /* HTTPURLResponse+StatusCode.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "HTTPURLResponse+StatusCode.swift"; sourceTree = "<group>"; };
 		7041FBC02837D85B00BC1737 /* CodableMovieStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableMovieStore.swift; sourceTree = "<group>"; };
 		7041FBC328381C1600BC1737 /* MovieStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieStoreSpecs.swift; sourceTree = "<group>"; };
 		7041FBC52838240700BC1737 /* XCTestCase+MovieStoreSpecs.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MovieStoreSpecs.swift"; sourceTree = "<group>"; };
@@ -301,6 +303,14 @@
 			path = Main;
 			sourceTree = "<group>";
 		};
+		70168CFD28491B160040D984 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				70168CFE28491B3D0040D984 /* HTTPURLResponse+StatusCode.swift */,
+			);
+			path = Helpers;
+			sourceTree = "<group>";
+		};
 		7041FBC228381C0600BC1737 /* MovieStoreSpecs */ = {
 			isa = PBXGroup;
 			children = (
@@ -389,6 +399,7 @@
 		70C166272821E347002561DB /* API */ = {
 			isa = PBXGroup;
 			children = (
+				70168CFD28491B160040D984 /* Helpers */,
 				70DF1B892822F5EA007AF92B /* Model */,
 				70C166282821E35E002561DB /* HTTPClient.swift */,
 				70C1662A2821E385002561DB /* RemoteMovieLoader.swift */,
@@ -729,6 +740,7 @@
 				704720DB2833014300B1E2E8 /* ValidCachePolicy.swift in Sources */,
 				7012B6DA2841654F00A2A79F /* CoreDataHelpers.swift in Sources */,
 				7095F6D22821A90E00067D58 /* MovieRoot.swift in Sources */,
+				70168CFF28491B3D0040D984 /* HTTPURLResponse+StatusCode.swift in Sources */,
 				7095F6D02821A85400067D58 /* Movie.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

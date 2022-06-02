@@ -7,6 +7,10 @@
 
 import Foundation
 
+public protocol HTTPClientTask {
+    func cancel()
+}
+
 public protocol HTTPClient {
-    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void)
+    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) -> HTTPClientTask
 }

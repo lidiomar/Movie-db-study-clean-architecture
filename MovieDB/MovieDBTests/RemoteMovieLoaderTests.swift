@@ -199,12 +199,22 @@ class RemoteMovieLoaderTests: XCTestCase {
 }
 
 class HTTPClientSpy: HTTPClient {
+    private struct TaskSpy: HTTPClientTask {
+        let cancelCallback: () -> Void
+        func cancel() {
+            cancelCallback()
+        }
+    }
     var urls: [URL] = []
     var completions: [(Result<(Data, HTTPURLResponse), Error>) -> Void] = []
-    
-    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) {
+    var cancelledImageUrls: [URL?] = []
+
+    func get(url: URL, completion: @escaping (Result<(Data, HTTPURLResponse), Error>) -> Void) -> HTTPClientTask {
         urls.append(url)
         completions.append(completion)
+        return TaskSpy { [weak self] in
+            self?.cancelledImageUrls.append(url)
+        }
     }
     
     func completeWith(error: Error, at index: Int) {
