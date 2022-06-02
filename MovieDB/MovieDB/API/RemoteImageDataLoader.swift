@@ -29,11 +29,7 @@ public class RemoteImageDataLoader: MovieImageDataLoader {
                                 return isValidResponse ? .success(data) : .failure(ImageDataLoaderError.invalidData)
                             })
         }
-        return HTTPClientTask()
-    }
-    
-    private final class HTTPClientTask: MovieImageDataLoaderTask {
-        func cancel() {}
+        return task
     }
 }
 

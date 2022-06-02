@@ -9,6 +9,7 @@ import XCTest
 import MovieDB
 
 class RemoteImageDataLoaderTests: XCTestCase {
+    private typealias LoaderError = RemoteImageDataLoader.ImageDataLoaderError
     
     func test_init_doesNotPerformAnyURLRequest() {
         let (_, httpClient) = makeSUT()
@@ -61,10 +62,55 @@ class RemoteImageDataLoaderTests: XCTestCase {
         let samples = [199, 201, 300, 400, 500]
         
         samples.enumerated().forEach { index, code in
-            expectToCompleteWith(sut: sut, result: .failure(RemoteImageDataLoader.ImageDataLoaderError.invalidData)) {
+            expectToCompleteWith(sut: sut, result: .failure(LoaderError.invalidData)) {
                 httpClient.complete(statusCode: code, andData: Data(), at: index)
             }
         }
+    }
+    
+    func test_loadImageData_deliversInvalidDataErrorOn200HTTPResponseWithEmptyData() {
+        let (sut, client) = makeSUT()
+        
+        expectToCompleteWith(sut: sut, result: .failure(LoaderError.invalidData), when: {
+            let emptyData = Data()
+            client.complete(statusCode: 200, andData: emptyData)
+        })
+    }
+    
+    func test_loadImageData_deliversReceivedNonEmptyDataOn200HTTPResponse() {
+        let (sut, client) = makeSUT()
+        let nonEmptyData = Data("non-empty data".utf8)
+
+        expectToCompleteWith(sut: sut, result: .success(nonEmptyData), when: {
+            client.complete(statusCode: 200, andData: nonEmptyData)
+        })
+    }
+    
+    func test_cancelLoadImageDataURLTask_cancelsClientURLRequest() {
+        let (sut, client) = makeSUT()
+        let url = URL(string: "https://a-given-url.com")!
+
+        let task = sut.loadImageData(url: url) { _ in }
+        XCTAssertTrue(client.cancelledURLs.isEmpty, "Expected no cancelled URL request until task is cancelled")
+
+        task.cancel()
+        XCTAssertEqual(client.cancelledURLs, [url], "Expected cancelled URL request after task is cancelled")
+    }
+    
+    func test_loadImageDataFromURL_doesNotDeliverResultAfterCancellingTask() {
+        let (sut, client) = makeSUT()
+        let nonEmptyData = Data("non-empty data".utf8)
+        let url = URL(string: "https://a-given-url.com")!
+        
+        var received = [(Result<Data, Error>)]()
+        let task = sut.loadImageData(url: url) { received.append($0) }
+        task.cancel()
+
+        client.complete(statusCode: 404, andData: Data())
+        client.complete(statusCode: 200, andData: nonEmptyData)
+        client.complete(withError: anyError())
+
+        XCTAssertTrue(received.isEmpty, "Expected no received results after cancelling task")
     }
     
     private func expectToCompleteWith(sut: RemoteImageDataLoader, result expectedResult: Result<Data, Error>, when action: () -> Void) {
@@ -75,6 +121,8 @@ class RemoteImageDataLoaderTests: XCTestCase {
             switch (result, expectedResult) {
             case let (.failure(error), .failure(expectedError)):
                 XCTAssertEqual(error as! RemoteImageDataLoader.ImageDataLoaderError, expectedError as! RemoteImageDataLoader.ImageDataLoaderError)
+            case let (.success(successResult), .success(expectedSuccessResult)):
+                XCTAssertEqual(successResult, expectedSuccessResult)
             default:
                 XCTFail("Expected error, got \(result)")
             }
@@ -115,11 +163,11 @@ class RemoteImageDataLoaderTests: XCTestCase {
             }
         }
         
-        func complete(withError error: Error, at index: Int) {
+        func complete(withError error: Error, at index: Int = 0) {
             completions[index](.failure(error))
         }
         
-        func complete(statusCode: Int, andData data: Data, at index: Int) {
+        func complete(statusCode: Int, andData data: Data, at index: Int = 0) {
             let urlResponse = HTTPURLResponse(url: URL(string: "http://any-url.com")!, statusCode: statusCode, httpVersion: nil, headerFields: nil)!
             completions[index](.success((data, urlResponse)))
         }
