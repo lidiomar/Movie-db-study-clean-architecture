@@ -53,7 +53,6 @@ extension PopularMoviesViewController {
             let data: Data? = try? result.get()
             let image = data.map(UIImage.init) ?? nil
             cell?.thumbnail.image = image
-            print(cell?.thumbnail.image == nil)
         }
         imageDataLoaderTasks[indexPath] = task
         

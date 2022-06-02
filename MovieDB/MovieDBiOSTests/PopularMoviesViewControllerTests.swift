@@ -84,6 +84,24 @@ class PopularMoviesViewControllerTests: XCTestCase {
         XCTAssertEqual(cell.renderedImage(), imageData)
     }
     
+    func test_loadMovies_rendersImageFromBackgroundToMainThread() {
+        let (sut, loader) = makeSUT()
+        let movie = makeUniqueMovie()
+        let imageData = UIImage.make(withColor: .red).pngData()!
+        let exp = expectation(description: "Wait for background queue")
+
+        sut.loadViewIfNeeded()
+        loader.complete(withMovieRoot: MovieRoot(page: 1, results: [movie]), at: 0)
+        sut.simulateCellVisible(at: 0)
+        
+        DispatchQueue.global().async {
+            loader.complete(withImageData: imageData, at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
+    }
+    
     func test_loadMovies_dispatchesFromBackgroundToMainThread() {
         let (sut, loader) = makeSUT()
         let movie = makeUniqueMovie()

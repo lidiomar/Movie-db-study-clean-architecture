@@ -18,7 +18,7 @@ public final class MovieDBUICreator {
         let viewController = storyboard.instantiateViewController(withIdentifier: "PopularMoviesViewController") as! PopularMoviesViewController
     
         viewController.viewModel = viewModel
-        viewController.imageDataLoader = imageDataLoader
+        viewController.imageDataLoader = DispatchMainQueueDecorator(decoratee: imageDataLoader)
         return viewController
     }
 }
