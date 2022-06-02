@@ -71,7 +71,7 @@ class PopularMoviesViewControllerTests: XCTestCase {
         XCTAssertTrue(loader.cancelledImageUrls[0]!.absoluteString.contains(movie.posterPath!))
     }
     
-    func test_feedImageView_rendersImageLoadedFromURL() {
+    func test_loadMovies_rendersImageLoadedFromURL() {
         let (sut, loader) = makeSUT()
         let movie = makeUniqueMovie()
         let imageData = UIImage.make(withColor: .red).pngData()!
@@ -82,6 +82,20 @@ class PopularMoviesViewControllerTests: XCTestCase {
         loader.complete(withImageData: imageData, at: 0)
         
         XCTAssertEqual(cell.renderedImage(), imageData)
+    }
+    
+    func test_loadMovies_dispatchesFromBackgroundToMainThread() {
+        let (sut, loader) = makeSUT()
+        let movie = makeUniqueMovie()
+        let exp = expectation(description: "Wait for background queue")
+        sut.loadViewIfNeeded()
+        
+        DispatchQueue.global().async {
+            loader.complete(withMovieRoot: MovieRoot(page: 1, results: [movie]), at: 0)
+            exp.fulfill()
+        }
+        
+        wait(for: [exp], timeout: 1.0)
     }
     
     private func assertThat(sut: PopularMoviesViewController, isRendering movies: [Movie], at index: Int) {
@@ -99,14 +113,9 @@ class PopularMoviesViewControllerTests: XCTestCase {
     }
     
     private func makeSUT() -> (PopularMoviesViewController, MovieLoaderSpy) {
-        let spy = MovieLoaderSpy()
-        let viewModel = PopularMoviesViewModel(movieLoader: spy)
-        let storyboard = UIStoryboard(name: "Movie", bundle: Bundle(for: PopularMoviesViewController.self))
-        let viewController = storyboard.instantiateViewController(withIdentifier: "PopularMoviesViewController") as! PopularMoviesViewController
-    
-        viewController.viewModel = viewModel
-        viewController.imageDataLoader = spy
-        return (viewController, spy)
+        let movieLoader = MovieLoaderSpy()
+        let viewController = MovieDBUICreator.popularMoviesCreatedWith(loader: movieLoader, imageDataLoader: movieLoader)
+        return (viewController, movieLoader)
     }
     
     private func anyError() -> NSError {

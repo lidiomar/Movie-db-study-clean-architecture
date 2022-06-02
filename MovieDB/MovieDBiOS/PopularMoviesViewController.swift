@@ -8,26 +8,24 @@
 import UIKit
 import MovieDB
 
-protocol MovieImageDataLoaderTask {
-    func cancel()
-}
-
-protocol MovieImageDataLoader {
-    func loadImageData(url: URL?, completion: @escaping (Result<Data, Error>) -> Void) -> MovieImageDataLoaderTask
-}
-
-class PopularMoviesViewController: UITableViewController {
+public class PopularMoviesViewController: UITableViewController {
     var viewModel: PopularMoviesViewModel?
     var imageDataLoader: MovieImageDataLoader?
     var imageDataLoaderTasks: [IndexPath: MovieImageDataLoaderTask] = [:]
     
     private var movies: [MovieModel] = [] {
         didSet {
+            guard Thread.isMainThread else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadData()
+                }
+                return
+            }
             tableView.reloadData()
         }
     }
     
-    override func viewDidLoad() {
+    public override func viewDidLoad() {
         super.viewDidLoad()
         bindViewModel()
         viewModel?.loadMovie()
@@ -45,11 +43,11 @@ class PopularMoviesViewController: UITableViewController {
 }
 
 extension PopularMoviesViewController {
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+    public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return self.movies.count
     }
     
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+    public override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell: MovieTableViewCell = tableView.dequeueReusableCell()
         let movie = movies[indexPath.row]
         cell.popularity.text = movie.popularity
@@ -68,7 +66,7 @@ extension PopularMoviesViewController {
         return cell
     }
     
-    override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
+    public override func tableView(_ tableView: UITableView, didEndDisplaying cell: UITableViewCell, forRowAt indexPath: IndexPath) {
         cancelTask(forRowAt: indexPath)
     }
     
