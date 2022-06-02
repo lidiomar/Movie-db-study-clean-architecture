@@ -11,8 +11,9 @@ import UIKit
 
 public final class MovieDBUICreator {
     
-    public static func popularMoviesCreatedWith(loader: MovieLoader, imageDataLoader: MovieImageDataLoader) -> PopularMoviesViewController {
-        let viewModel = PopularMoviesViewModel(movieLoader: loader)
+    public static func popularMoviesCreatedWith(loader: MovieLoader,
+                                                imageDataLoader: MovieImageDataLoader) -> PopularMoviesViewController {
+        let viewModel = PopularMoviesViewModel(movieLoader: DispatchMainQueueDecorator(decoratee: loader))
         let storyboard = UIStoryboard(name: "Movie", bundle: Bundle(for: PopularMoviesViewController.self))
         let viewController = storyboard.instantiateViewController(withIdentifier: "PopularMoviesViewController") as! PopularMoviesViewController
     

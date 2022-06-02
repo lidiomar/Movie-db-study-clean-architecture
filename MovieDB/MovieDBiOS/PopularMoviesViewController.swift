@@ -15,12 +15,6 @@ public class PopularMoviesViewController: UITableViewController {
     
     private var movies: [MovieModel] = [] {
         didSet {
-            guard Thread.isMainThread else {
-                DispatchQueue.main.async { [weak self] in
-                    self?.tableView.reloadData()
-                }
-                return
-            }
             tableView.reloadData()
         }
     }
