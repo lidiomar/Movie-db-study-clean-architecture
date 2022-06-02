@@ -16,6 +16,8 @@ public class RemoteImageDataLoader: MovieImageDataLoader {
     }
     
     public func loadImageData(url: URL?, completion: @escaping (Result<Data, Error>) -> Void) -> MovieImageDataLoaderTask {
+        guard let url = url else { return HTTPClientTask() }
+        httpClient.get(url: url) { _ in }
         return HTTPClientTask()
     }
     
