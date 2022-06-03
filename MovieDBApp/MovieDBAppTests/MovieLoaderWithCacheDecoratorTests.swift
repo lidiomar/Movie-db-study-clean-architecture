@@ -9,7 +9,9 @@ import Foundation
 import XCTest
 import MovieDB
 
-protocol MovieCache {}
+protocol MovieCache {
+    func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void)
+}
 
 class MovieLoaderWithCacheDecorator: MovieLoader {
     
@@ -22,7 +24,11 @@ class MovieLoaderWithCacheDecorator: MovieLoader {
     }
     
     func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        decoratee.load(completion: completion)
+        decoratee.load { [weak self] result in
+            completion(result)
+            guard let movieRoot = try? result.get() else { return }
+            self?.cache.save(movieRoot: movieRoot) { _ in }
+        }
     }
 }
 
@@ -42,8 +48,17 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
         
         expect(sut: sut, with: .failure(error))
     }
-
     
+    func test_load_saveOnCacheOnDecorateeSuccess() {
+        let movieRoot = MovieRoot(page: 1, results: [makeUniqueMovie()])
+        let cache = MovieCacheSpy()
+        let sut = makeSUT(result: .success(movieRoot), cache: cache)
+        
+        sut.load { _ in }
+        
+        XCTAssertEqual(cache.cacheMovies, [movieRoot])
+    }
+
     private func expect(sut: MovieLoader, with expectedResult: MovieLoader.MovieLoaderResult) {
         let exp = expectation(description: "Wait for load")
         
@@ -61,9 +76,8 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func makeSUT(result: MovieLoader.MovieLoaderResult) -> MovieLoader {
+    private func makeSUT(result: MovieLoader.MovieLoaderResult, cache: MovieCacheSpy = MovieCacheSpy.init()) -> MovieLoader {
         let loader = MovieLoaderStub(result: result)
-        let cache = MovieCacheSpy()
         let sut = MovieLoaderWithCacheDecorator(decoratee: loader, cache: cache)
         return sut
     }
@@ -94,6 +108,9 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
     }
     
     private class MovieCacheSpy: MovieCache {
-        
+        var cacheMovies: [MovieRoot] = []
+        func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
+            cacheMovies.append(movieRoot)
+        }
     }
 }

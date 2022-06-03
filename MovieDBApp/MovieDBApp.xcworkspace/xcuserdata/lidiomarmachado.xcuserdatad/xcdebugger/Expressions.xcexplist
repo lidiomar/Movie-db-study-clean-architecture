@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<VariablesViewState
+   version = "1.0">
+   <ContextStates>
+      <ContextState
+         contextName = "closure #1 in MovieLoaderWithCacheDecorator.load(completion:):MovieLoaderWithCacheDecoratorTests.swift">
+      </ContextState>
+      <ContextState
+         contextName = "MovieLoaderWithCacheDecoratorTests.MovieCacheSpy.save(movieRoot:completion:):MovieLoaderWithCacheDecoratorTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cacheMovies">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "MovieLoaderWithCacheDecoratorTests.test_load_saveOnCacheOnDecorateeSuccess():MovieLoaderWithCacheDecoratorTests.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "cache.cacheMovies">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+   </ContextStates>
+</VariablesViewState>
