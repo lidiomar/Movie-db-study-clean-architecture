@@ -58,6 +58,16 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
         
         XCTAssertEqual(cache.cacheMovies, [movieRoot])
     }
+    
+    func test_load_doesNotSaveOnCacheOnDecorateeFailure() {
+        let error = NSError(domain: "domain", code: 1, userInfo: nil)
+        let cache = MovieCacheSpy()
+        let sut = makeSUT(result: .failure(error))
+        
+        sut.load { _ in }
+        
+        XCTAssertEqual(cache.cacheMovies, [], "Values should not be saved if an error occurs on save.")
+    }
 
     private func expect(sut: MovieLoader, with expectedResult: MovieLoader.MovieLoaderResult) {
         let exp = expectation(description: "Wait for load")
