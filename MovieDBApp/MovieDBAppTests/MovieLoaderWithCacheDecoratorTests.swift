@@ -34,6 +34,15 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
         
         expect(sut: sut, with: .success(movieRoot))
     }
+
+    
+    func test_load_deliversFailureOnDecorateeFailure() {
+        let error = NSError(domain: "domain", code: 1, userInfo: nil)
+        let sut = makeSUT(result: .failure(error))
+        
+        expect(sut: sut, with: .failure(error))
+    }
+
     
     private func expect(sut: MovieLoader, with expectedResult: MovieLoader.MovieLoaderResult) {
         let exp = expectation(description: "Wait for load")
@@ -42,6 +51,8 @@ class MovieLoaderWithCacheDecoratorTests: XCTestCase {
             switch (result, expectedResult) {
             case let (.success(receivedMovieRoot), .success(expectedMovieRoot)):
                 XCTAssertEqual(receivedMovieRoot, expectedMovieRoot)
+            case let (.failure(receivedError as NSError), .failure(expectedError as NSError)):
+                XCTAssertEqual(receivedError, expectedError)
             default:
                 XCTFail("Expected success, got \(result) instead.")
             }
