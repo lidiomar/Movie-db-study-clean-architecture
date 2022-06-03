@@ -12,6 +12,7 @@
 		70168E06284936DF0040D984 /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70168E05284936DF0040D984 /* ViewController.swift */; };
 		70168E0B284936E00040D984 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 70168E0A284936E00040D984 /* Assets.xcassets */; };
 		70168E0E284936E00040D984 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 70168E0C284936E00040D984 /* LaunchScreen.storyboard */; };
+		702BF33C284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift in Sources */ = {isa = PBXBuildFile; fileRef = 702BF33B284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift */; };
 		703661B4284973F8004E906E /* MovieDBAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703661B3284973F8004E906E /* MovieDBAppTests.swift */; };
 		703661BB28497477004E906E /* MovieLoaderWithFallbackCompositeTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 703661BA28497477004E906E /* MovieLoaderWithFallbackCompositeTests.swift */; };
 		70AAC5AB28493A34000A9E72 /* MovieDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70AAC5A928493A34000A9E72 /* MovieDB.framework */; };
@@ -53,6 +54,7 @@
 		70168E0A284936E00040D984 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		70168E0D284936E00040D984 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		70168E0F284936E00040D984 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		702BF33B284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLoaderWithFallbackComposite.swift; sourceTree = "<group>"; };
 		703661B1284973F8004E906E /* MovieDBAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieDBAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		703661B3284973F8004E906E /* MovieDBAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDBAppTests.swift; sourceTree = "<group>"; };
 		703661BA28497477004E906E /* MovieLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
@@ -105,6 +107,7 @@
 				70168E01284936DF0040D984 /* AppDelegate.swift */,
 				70168E03284936DF0040D984 /* SceneDelegate.swift */,
 				70168E05284936DF0040D984 /* ViewController.swift */,
+				702BF33B284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift */,
 				70168E0A284936E00040D984 /* Assets.xcassets */,
 				70168E0C284936E00040D984 /* LaunchScreen.storyboard */,
 				70168E0F284936E00040D984 /* Info.plist */,
@@ -234,6 +237,7 @@
 				70168E06284936DF0040D984 /* ViewController.swift in Sources */,
 				70168E02284936DF0040D984 /* AppDelegate.swift in Sources */,
 				70168E04284936DF0040D984 /* SceneDelegate.swift in Sources */,
+				702BF33C284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

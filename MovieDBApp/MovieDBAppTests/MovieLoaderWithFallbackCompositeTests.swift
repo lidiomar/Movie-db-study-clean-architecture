@@ -7,27 +7,7 @@
 
 import XCTest
 import MovieDB
-
-class MovieLoaderWithFallbackComposite: MovieLoader {
-    private var primaryLoader: MovieLoader
-    private var fallbackLoader: MovieLoader
-    
-    init(primaryLoader: MovieLoader, fallbackLoader: MovieLoader) {
-        self.primaryLoader = primaryLoader
-        self.fallbackLoader = fallbackLoader
-    }
-    
-    func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        primaryLoader.load { [weak self] result in
-            switch result {
-            case .success:
-                completion(result)
-            default:
-                self?.fallbackLoader.load(completion: completion)
-            }
-        }
-    }
-}
+import MovieDBApp
 
 class MovieLoaderWithFallbackCompositeTests: XCTestCase {
     
