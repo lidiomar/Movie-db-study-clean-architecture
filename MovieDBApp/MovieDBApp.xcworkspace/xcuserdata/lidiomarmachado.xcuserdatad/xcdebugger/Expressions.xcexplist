@@ -3,13 +3,24 @@
    version = "1.0">
    <ContextStates>
       <ContextState
-         contextName = "closure #1 in MovieLoaderWithCacheDecorator.load(completion:):MovieLoaderWithCacheDecoratorTests.swift">
-      </ContextState>
-      <ContextState
          contextName = "MovieLoaderWithCacheDecoratorTests.MovieCacheSpy.save(movieRoot:completion:):MovieLoaderWithCacheDecoratorTests.swift">
          <PersistentStrings>
             <PersistentString
                value = "cacheMovies">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
+         contextName = "closure #1 in MovieLoaderWithCacheDecorator.load(completion:):MovieLoaderWithCacheDecoratorTests.swift">
+      </ContextState>
+      <ContextState
+         contextName = "static NSManagedObjectModel.with(name:in:):CoreDataHelpers.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "name">
+            </PersistentString>
+            <PersistentString
+               value = "bundle.url(forResource: name, withExtension: &quot;momd&quot;)">
             </PersistentString>
          </PersistentStrings>
       </ContextState>

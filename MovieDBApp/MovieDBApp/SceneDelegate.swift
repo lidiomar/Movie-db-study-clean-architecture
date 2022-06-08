@@ -8,21 +8,32 @@
 import UIKit
 import MovieDBiOS
 import MovieDB
+import CoreData
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
-
-
+    private lazy var store: MovieStore = {
+        try! CoreDataMovieStore(
+            storeURL: NSPersistentContainer
+                .defaultDirectoryURL()
+                .appendingPathComponent("movie-store.sqlite"))
+    }()
+    
+    private let url = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=44bc59c6e912b1afda251960c4f46658&language=en-US&page=1")!
+    
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         
         guard let windowScene = (scene as? UIWindowScene) else { return }
         let httpClient = URLSessionHTTPClient()
-        let url = URL(string: "https://api.themoviedb.org/3/movie/popular?api_key=44bc59c6e912b1afda251960c4f46658&language=en-US&page=1")!
-        let loader = RemoteMovieLoader(url: url, httpClient: httpClient)
-        let imageLoader = RemoteImageDataLoader(httpClient: httpClient)
+        let localMovieLoader = LocalMovieLoader(movieStore: store, timestamp: Date.init)
+        let remoteMovieloader = RemoteMovieLoader(url: url, httpClient: httpClient)
+        let remoteImageLoader = RemoteImageDataLoader(httpClient: httpClient)
         
-        let popularMoviesViewController = MovieDBUICreator.popularMoviesCreatedWith(loader: loader, imageDataLoader: imageLoader)
+        let removeMovieLoaderWithCacheFallback = MovieLoaderWithCacheDecorator(decoratee: remoteMovieloader, cache: localMovieLoader)
+        let movieLoaderComposite = MovieLoaderWithFallbackComposite(primaryLoader: removeMovieLoaderWithCacheFallback, fallbackLoader: localMovieLoader)
+        
+        let popularMoviesViewController = MovieDBUICreator.popularMoviesCreatedWith(loader: movieLoaderComposite, imageDataLoader: remoteImageLoader)
         
         window = UIWindow(windowScene: windowScene)
         window?.rootViewController = popularMoviesViewController

@@ -11,10 +11,25 @@ import CoreData
 public class CoreDataMovieStore: MovieStore {
     private let container: NSPersistentContainer
     private let context: NSManagedObjectContext
+    private static let modelName = "Movie"
+    private static let model = NSManagedObjectModel.with(name: modelName, in: Bundle(for: CoreDataMovieStore.self))
     
-    public init(storeURL: URL, bundle: Bundle = .main) throws {
-        container = try NSPersistentContainer.load(modelName: "Movie", url: storeURL, in: bundle)
-        context = container.newBackgroundContext()
+    enum StoreError: Swift.Error {
+        case modelNotFound
+        case failedToLoadPersistentStores(Swift.Error)
+    }
+    
+    public init(storeURL: URL) throws {
+        guard let model = CoreDataMovieStore.model else {
+            throw StoreError.modelNotFound
+        }
+        
+        do {
+            container = try NSPersistentContainer.load(name: CoreDataMovieStore.modelName, model: model, url: storeURL)
+            context = container.newBackgroundContext()
+        } catch {
+            throw StoreError.failedToLoadPersistentStores(error)
+        }
     }
     
     public func deleteCache(completion: @escaping (Error?) -> Void) {
