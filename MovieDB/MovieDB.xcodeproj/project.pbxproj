@@ -55,6 +55,7 @@
 		70C1662B2821E385002561DB /* RemoteMovieLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70C1662A2821E385002561DB /* RemoteMovieLoader.swift */; };
 		70DF1B842822B8BB007AF92B /* MovieRootDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DF1B832822B8BB007AF92B /* MovieRootDecodable.swift */; };
 		70DF1B862822B8E5007AF92B /* MovieDecodable.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70DF1B852822B8E5007AF92B /* MovieDecodable.swift */; };
+		70E2540C28501F6E00A06B85 /* MovieCache.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E2540B28501F6E00A06B85 /* MovieCache.swift */; };
 		70F2AC0028446AD500E60B74 /* PopularMoviesViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F2ABFF28446AD500E60B74 /* PopularMoviesViewModel.swift */; };
 		70F64AB42843DAA300102ECF /* MovieDBCacheIntegrationTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70F64AB32843DAA300102ECF /* MovieDBCacheIntegrationTests.swift */; };
 		70F64AB52843DAA300102ECF /* MovieDB.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 7095F6B22821972200067D58 /* MovieDB.framework */; };
@@ -167,6 +168,7 @@
 		70C1662A2821E385002561DB /* RemoteMovieLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RemoteMovieLoader.swift; sourceTree = "<group>"; };
 		70DF1B832822B8BB007AF92B /* MovieRootDecodable.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieRootDecodable.swift; sourceTree = "<group>"; };
 		70DF1B852822B8E5007AF92B /* MovieDecodable.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = MovieDecodable.swift; path = MovieDB/API/Model/MovieDecodable.swift; sourceTree = SOURCE_ROOT; };
+		70E2540B28501F6E00A06B85 /* MovieCache.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieCache.swift; sourceTree = "<group>"; };
 		70F2ABFF28446AD500E60B74 /* PopularMoviesViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PopularMoviesViewModel.swift; sourceTree = "<group>"; };
 		70F64AB12843DAA300102ECF /* MovieDBCacheIntegrationTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = MovieDBCacheIntegrationTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		70F64AB32843DAA300102ECF /* MovieDBCacheIntegrationTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieDBCacheIntegrationTests.swift; sourceTree = "<group>"; };
@@ -424,6 +426,7 @@
 			children = (
 				70168CEF28483C6B0040D984 /* MovieImageDataLoader.swift */,
 				7095F6CD2821A75E00067D58 /* MovieLoader.swift */,
+				70E2540B28501F6E00A06B85 /* MovieCache.swift */,
 			);
 			path = Interface;
 			sourceTree = "<group>";
@@ -719,6 +722,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				708EC9F22829C61A00CF3F28 /* MovieStore.swift in Sources */,
+				70E2540C28501F6E00A06B85 /* MovieCache.swift in Sources */,
 				709757E9282368E5006905D7 /* RemoteMovieLoaderMapper.swift in Sources */,
 				701071A6282A9D0D00C69933 /* LocalMovieRoot.swift in Sources */,
 				7012B6D128415ABC00A2A79F /* ManagedCache.swift in Sources */,

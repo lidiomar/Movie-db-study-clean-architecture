@@ -8,29 +8,7 @@
 import Foundation
 import XCTest
 import MovieDB
-
-protocol MovieCache {
-    func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void)
-}
-
-class MovieLoaderWithCacheDecorator: MovieLoader {
-    
-    private var decoratee: MovieLoader
-    private var cache: MovieCache
-    
-    init(decoratee: MovieLoader, cache: MovieCache) {
-        self.decoratee = decoratee
-        self.cache = cache
-    }
-    
-    func load(completion: @escaping (MovieLoaderResult) -> Void) {
-        decoratee.load { [weak self] result in
-            completion(result)
-            guard let movieRoot = try? result.get() else { return }
-            self?.cache.save(movieRoot: movieRoot) { _ in }
-        }
-    }
-}
+import MovieDBApp
 
 class MovieLoaderWithCacheDecoratorTests: XCTestCase {
     

@@ -16,17 +16,6 @@ public class LocalMovieLoader {
         self.movieStore = movieStore
         self.currentDate = timestamp
     }
-    
-    public func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
-        movieStore.deleteCache() { [weak self] cacheDeletionError in
-            guard let self = self else { return }
-            if cacheDeletionError == nil {
-                self.cache(movieRoot: movieRoot, withCompletion: completion)
-                return
-            }
-            completion(cacheDeletionError)
-        }
-    }
         
     private func cache(movieRoot: MovieRoot,
                        withCompletion completion: @escaping (Error?) -> Void) {
@@ -40,6 +29,19 @@ public class LocalMovieLoader {
         }
     }
     
+}
+
+extension LocalMovieLoader: MovieCache {
+    public func save(movieRoot: MovieRoot, completion: @escaping (Error?) -> Void) {
+        movieStore.deleteCache() { [weak self] cacheDeletionError in
+            guard let self = self else { return }
+            if cacheDeletionError == nil {
+                self.cache(movieRoot: movieRoot, withCompletion: completion)
+                return
+            }
+            completion(cacheDeletionError)
+        }
+    }
 }
 
 extension LocalMovieLoader: MovieLoader {

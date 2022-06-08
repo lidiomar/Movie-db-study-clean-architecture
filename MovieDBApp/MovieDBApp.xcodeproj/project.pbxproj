@@ -19,6 +19,7 @@
 		70AAC5AC28493A34000A9E72 /* MovieDB.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70AAC5A928493A34000A9E72 /* MovieDB.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		70AAC5AD28493A34000A9E72 /* MovieDBiOS.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 70AAC5AA28493A34000A9E72 /* MovieDBiOS.framework */; };
 		70AAC5AE28493A34000A9E72 /* MovieDBiOS.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 70AAC5AA28493A34000A9E72 /* MovieDBiOS.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		70E2540A28501E5A00A06B85 /* MovieLoaderWithCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 70E2540928501E5A00A06B85 /* MovieLoaderWithCacheDecorator.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -60,6 +61,7 @@
 		703661BA28497477004E906E /* MovieLoaderWithFallbackCompositeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLoaderWithFallbackCompositeTests.swift; sourceTree = "<group>"; };
 		70AAC5A928493A34000A9E72 /* MovieDB.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MovieDB.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		70AAC5AA28493A34000A9E72 /* MovieDBiOS.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = MovieDBiOS.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		70E2540928501E5A00A06B85 /* MovieLoaderWithCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MovieLoaderWithCacheDecorator.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -108,6 +110,7 @@
 				70168E03284936DF0040D984 /* SceneDelegate.swift */,
 				70168E05284936DF0040D984 /* ViewController.swift */,
 				702BF33B284AA4CE00BCE73A /* MovieLoaderWithFallbackComposite.swift */,
+				70E2540928501E5A00A06B85 /* MovieLoaderWithCacheDecorator.swift */,
 				70168E0A284936E00040D984 /* Assets.xcassets */,
 				70168E0C284936E00040D984 /* LaunchScreen.storyboard */,
 				70168E0F284936E00040D984 /* Info.plist */,
@@ -234,6 +237,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				70E2540A28501E5A00A06B85 /* MovieLoaderWithCacheDecorator.swift in Sources */,
 				70168E06284936DF0040D984 /* ViewController.swift in Sources */,
 				70168E02284936DF0040D984 /* AppDelegate.swift in Sources */,
 				70168E04284936DF0040D984 /* SceneDelegate.swift in Sources */,
