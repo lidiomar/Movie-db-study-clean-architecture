@@ -95,9 +95,8 @@ class MovieDBCacheIntegrationTests: XCTestCase {
     
     
     private func makeSUT() -> LocalMovieLoader {
-        let storeBundle = Bundle(for: CoreDataMovieStore.self)
         let storeURL = testSpecificStoreURL()
-        let movieStore = try! CoreDataMovieStore(storeURL: storeURL, bundle: storeBundle)
+        let movieStore = try! CoreDataMovieStore(storeURL: storeURL)
         let movieLoader = LocalMovieLoader(movieStore: movieStore, timestamp: Date.init)
         return movieLoader
     }

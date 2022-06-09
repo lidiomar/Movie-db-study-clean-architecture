@@ -92,9 +92,8 @@ class CoreDataMovieStoreTests: XCTestCase, MovieStoreSpecs {
     }
     
     private func makeSUT(url: URL? = nil) -> MovieStore {
-        let storeBundle = Bundle(for: CoreDataMovieStore.self)
         let storeURL = URL(fileURLWithPath: "/dev/null")
-        let sut = try! CoreDataMovieStore(storeURL: storeURL, bundle: storeBundle)
+        let sut = try! CoreDataMovieStore(storeURL: storeURL)
         return sut
     }
 }

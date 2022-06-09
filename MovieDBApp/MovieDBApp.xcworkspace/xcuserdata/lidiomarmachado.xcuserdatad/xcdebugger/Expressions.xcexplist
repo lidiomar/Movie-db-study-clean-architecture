@@ -3,6 +3,14 @@
    version = "1.0">
    <ContextStates>
       <ContextState
+         contextName = "closure #1 in SceneDelegate.store.getter:SceneDelegate.swift">
+         <PersistentStrings>
+            <PersistentString
+               value = "NSPersistentContainer.defaultDirectoryURL()">
+            </PersistentString>
+         </PersistentStrings>
+      </ContextState>
+      <ContextState
          contextName = "MovieLoaderWithCacheDecoratorTests.MovieCacheSpy.save(movieRoot:completion:):MovieLoaderWithCacheDecoratorTests.swift">
          <PersistentStrings>
             <PersistentString
