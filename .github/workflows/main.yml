@@ -24,7 +24,7 @@ jobs:
       run: xcodebuild clean test -project MovieDB/MovieDB.xcodeproj -scheme "CI_macOS" CODE_SIGN_IDENTITY="" CODE_SIGNING_REQUIRED=NO
 
     - name: Build and test iOS
-      run: xcodebuild clean test -project MovieDB/MovieDB.xcodeproj -scheme "CI_iOS" -sdk iphonesimulator -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO
+      run: xcodebuild clean test -project MovieDB/MovieDB.xcodeproj -scheme "CI_iOS" -sdk iphonesimulator -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO
 
     - name: Build and test app
-      run: xcodebuild clean test -workspace MovieDBApp/MovieDBApp.xcworkspace -scheme "MovieDBApp" -sdk iphonesimulator -destination "platform=iOS Simulator,OS=15.2,name=iPhone 13" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO
+      run: xcodebuild clean test -workspace MovieDBApp/MovieDBApp.xcworkspace -scheme "MovieDBApp" -sdk iphonesimulator -destination "platform=iOS Simulator,OS=15.4,name=iPhone 13" ONLY_ACTIVE_ARCH=NO CODE_SIGNING_REQUIRED=NO
