@@ -325,11 +325,26 @@
 			path = MovieStoreSpecs;
 			sourceTree = "<group>";
 		};
+		7080E0522853DE0F0002CEF8 /* Cache infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				7004397928400E310050F7F6 /* Codable */,
+				7004397A28400E800050F7F6 /* Core data */,
+			);
+			path = "Cache infrastructure";
+			sourceTree = "<group>";
+		};
+		7080E0532853DE590002CEF8 /* API infrastructure */ = {
+			isa = PBXGroup;
+			children = (
+				7011E90A282472F50051AB36 /* URLSessionHTTPClient.swift */,
+			);
+			path = "API infrastructure";
+			sourceTree = "<group>";
+		};
 		708EC9EE2829C5D800CF3F28 /* Cache */ = {
 			isa = PBXGroup;
 			children = (
-				7004397A28400E800050F7F6 /* Core data */,
-				7004397928400E310050F7F6 /* Codable */,
 				701071A4282A9CEA00C69933 /* Model */,
 				708EC9EF2829C5EA00CF3F28 /* LocalMovieLoader.swift */,
 				708EC9F12829C61A00CF3F28 /* MovieStore.swift */,
@@ -368,9 +383,11 @@
 		7095F6B42821972200067D58 /* MovieDB */ = {
 			isa = PBXGroup;
 			children = (
+				7080E0532853DE590002CEF8 /* API infrastructure */,
+				7080E0522853DE0F0002CEF8 /* Cache infrastructure */,
 				708EC9EE2829C5D800CF3F28 /* Cache */,
 				70C166272821E347002561DB /* API */,
-				7095F6CC2821A74300067D58 /* MovieDB */,
+				7095F6CC2821A74300067D58 /* Business */,
 			);
 			path = MovieDB;
 			sourceTree = "<group>";
@@ -389,13 +406,13 @@
 			path = MovieDBTests;
 			sourceTree = "<group>";
 		};
-		7095F6CC2821A74300067D58 /* MovieDB */ = {
+		7095F6CC2821A74300067D58 /* Business */ = {
 			isa = PBXGroup;
 			children = (
 				70DF1B882822F5C8007AF92B /* Interface */,
 				70DF1B872822F5B8007AF92B /* Model */,
 			);
-			path = MovieDB;
+			path = Business;
 			sourceTree = "<group>";
 		};
 		70C166272821E347002561DB /* API */ = {
@@ -406,7 +423,6 @@
 				70C166282821E35E002561DB /* HTTPClient.swift */,
 				70C1662A2821E385002561DB /* RemoteMovieLoader.swift */,
 				709757E8282368E5006905D7 /* RemoteMovieLoaderMapper.swift */,
-				7011E90A282472F50051AB36 /* URLSessionHTTPClient.swift */,
 				70168CF928484EC40040D984 /* RemoteImageDataLoader.swift */,
 			);
 			path = API;
